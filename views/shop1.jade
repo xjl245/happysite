@@ -1,0 +1,128 @@
+extends layout
+
+block content
+    .container
+        .row.clearfix
+            .col-md-12.column
+                nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
+                    .navbar-header
+                        button.navbar-toggle(data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" )
+                            span.sr-only Toggle navigation
+                            span.icon-bar
+                            span.icon-bar
+                            span.icon-bar
+                    #bs-example-navbar-collapse-1.collapse.navbar-collapse
+                        .navbar-form.navbar-left(role='search' style='position:absolute;left:20%')
+                            .form-group
+                                span 宝贝搜索&nbsp;
+                                input.form-control(type='text')
+                                button.btn.btn-default 搜索一下
+                        ul.nav.navbar-nav(style='position:absolute;left:50%')
+                            li
+                                a(href='/') 首页
+                        ul.nav.navbar-nav(style='position:absolute;left:55%')
+                            li
+                                a(href='/') 影视推荐
+                        ul.nav.navbar-nav(style='position:absolute;left:62%')
+                            li.active
+                                a(href='/') 吃货世界
+        #menu(style='position:absolute; top:10%; left:16%; z-index:1000')
+            ul#nav
+                li.jquery_out
+                    .jquery_inner
+                        .jquery
+                            span.text let's enjoy shopping
+                                span.smile ^_^
+                li#mainlevel_01.mainlevel
+                    a(href='/' target="_blank") 休闲食品
+                    ul#sub_01
+                        li
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                li#mainlevel_02.mainlevel
+                    a(href='/' target="_blank") 饮料冲调
+                    ul#sub_02
+                        li
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                li#mainlevel_03.mainlevel
+                    a(href='/' target="_blank") 品牌茗茶
+                    ul#sub_03
+                        li
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                li#mainlevel_04.mainlevel
+                    a(href='/' target="_blank") 进口食品
+                    ul#sub_04
+                        li
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+                            a(href='/' target="_blank") 好吃的
+        #filter
+            dl
+                dt 品牌：
+                    dd
+                        div
+                            a 全部
+                    dd
+                        div
+                            a 全部
+                    dd
+                        div
+                            a 全部
+                    dd
+                        div
+                            a 全部
+                    dd
+                        div
+                            a 全部
+            dl
+                dt 价格：
+                    dd
+                        div
+                            a 全部
+                    dd
+                        div
+                            a 1000-2999
+                    dd
+                        div
+                            a 1000-2999
+                    dd
+                        div
+                            a 1000-2999
+                    dd
+                        div
+                            a 1000-2999
+            dl
+                dt 尺寸：
+                    dd
+                        div
+                            a 全部
+                    dd
+                        div
+                            a 8.9英寸及以下
+                    dd
+                        div
+                            a 11英寸
+                    dd
+                        div
+                            a 11英寸
+                    dd
+                        div
+                            a 11英寸
+

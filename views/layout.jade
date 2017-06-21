@@ -1,0 +1,76 @@
+doctype html
+html
+  head
+      title= title
+      link(rel='stylesheet', href='/stylesheets/style.css')
+      link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
+      link(rel='stylesheet', href='/stylesheets/mystyle.css')
+      script(src='/javascripts/respond.js')
+      script(src='/javascripts/jquery.min.js')
+      script(src='/javascripts/bootstrap.min.js')
+      script(src='/javascripts/slide.js')
+  body
+    .navbar.my-navbar-default.navbar-fixed-top(role='navigation')
+      .container
+        .navbar-header
+          button.navbar-toggle(type='button' data-toggle='collapse' data-target='.navbar-collapse')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.my-navbar-brand(href='/')
+            img(src='../images/logo.jpg' width=34 style='position: padding-bottom:5px')
+        .collapse.navbar-collapse
+          ul.nav.navbar-nav
+            li
+              a(href='/')
+                span(style='color:black').glyphicon 首页
+            li
+              a(href='/recommend')
+                span(style='color:black').glyphicon 每日推荐
+            li
+              a(href='/shop')
+                span(style='color:black').glyphicon 吃货世界
+            li
+              a
+                span(data-toggle='modal' data-target='#mymodalshare' style='color:black').glyphicon 影片共享
+          ul.nav.navbar-nav.navbar-right
+            li
+              a
+                span(data-toggle='modal' data-target='#mymodalfb' style='color:black').glyphicon 网站反馈
+    #mymodalfb.modal.fade(tabindex='-1' role='dialog' aria-labelledby='myModalLabel')
+      .modal-dialog(role='document')
+        .modal-content
+          .modal-header
+            button.close(data-dismiss='modal' aria-label='close')
+              span(aria-hidden='true') x
+            h4#myModalLabel.modal-title 问题反馈
+          .modal-body
+            .form-group
+              label.control-label 联系方式:
+              input.form-control(type='text' placeholder="请留下您的邮箱，以便我们及时回复您。")
+            .form-group
+              label.control-label 反馈内容:
+              textarea.form-control(rows='8' placeholder="欢迎您在使用过程中提出宝贵的建议，感谢对本站的支持。(必填)")
+
+          .modal-footer
+            button.btn.btn-default(data-dismiss='modal') 关闭
+            button.btn.btn-primary 保存
+    #mymodalshare.modal.fade(tabindex='-1' role='dialog' aria-labelledby='myModalLabelshare')
+      .modal-dialog(role='document')
+        .modal-content
+          .modal-header
+            button.close(data-dismiss='modal' aria-label='close')
+              span(aria-hidden='true') x
+            h4#myModalLabelshare.modal-title 影片共享
+          .modal-body
+            .form-group
+              label.control-label 影片名称:
+              input.form-control(type='text' placeholder="尽量写全名哦(小电影的不要)。必填")
+            .form-group
+              label.control-label 影片链接:
+              input.form-control(type='text' placeholder="如果是网盘，链接和密码用分号分割。必填")
+          .modal-footer
+            button.btn.btn-default(data-dismiss='modal') 关闭
+            button.btn.btn-primary 保存
+    block content
