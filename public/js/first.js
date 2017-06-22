@@ -25,16 +25,7 @@ window.onload = function(){
         }
 
         if(name !== '' && password !== '') {
-            var userinfo = {name: name, password: password};
-            socket.emit('register', userinfo);
+            $('#register').submit();
         }
     })
-
-    socket.on('registerOK', function(){
-        $('#registerOK').css('display', 'block');
-    });
-
-    socket.on('registerFail', function(){
-        $('#registerFail').css('display', 'block');
-    });
 }

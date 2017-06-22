@@ -46,9 +46,10 @@ html
                     h2(style='margin: 40px 20px 0px;font-size: 1.3em;color: #fff;') 简约，纯粹，电影小站
                 .row
                     h4(style='margin:20px;font-size: 1.0em;color: #fff;') 崇尚自由，追求简约
-                .row
-                    button.btn.btn-primary(data-toggle='modal' data-target='#mymodalregister') 注册
-                    button.btn.btn-primary(style='margin-left:5px') 登录
+                if hasLogined
+                    .row
+                        button.btn.btn-primary(data-toggle='modal' data-target='#mymodalregister') 注册
+                        button.btn.btn-primary(style='margin-left:5px') 登录
                 .row
                     .bar6
                         input.myinput(placeholder="影片名称")
@@ -99,24 +100,21 @@ html
                         button.close(data-dismiss='modal' aria-label='close')
                             span(aria-hidden='true') x
                         h4#myModalLabelregister.modal-title 注册页
-                    .modal-body
-                        .form-group
-                            label.control-label 用户名:
-                            input#registername.form-control(type='text' placeholder='最多填写10个字')
-                            h5#registernameerr(style='display:none')
-                                font(color='red') 用户名不能为空
-                        .form-group
-                            label.control-label 密码:
-                            input#registerpass.form-control(type='password' placeholder='此处输入密码')
-                            h5#registerpasserr(style='display:none')
-                                font(color='red') 密码不能为空
-                    .modal-footer
-                        h5#registerOK(style='float:left;display:none')
-                            font(color='red') 注册成功
-                        h5#registerFail(style='float:left;display:none')
-                            font(color='red') 注册失败，可能是我们程序内部错误，请反馈给我们，谢谢。
-                        button.btn.btn-default(data-dismiss='modal') 关闭
-                        button#register.btn.btn-primary 注册
+                    form(method='post' action='/user')
+                        .modal-body
+                            .form-group
+                                label.control-label 用户名:
+                                input#registername.form-control(type='text' placeholder='最多填写10个字' name='username')
+                                h5#registernameerr(style='display:none')
+                                    font(color='red') 用户名不能为空
+                            .form-group
+                                label.control-label 密码:
+                                input#registerpass.form-control(type='password' placeholder='此处输入密码' name='password')
+                                h5#registerpasserr(style='display:none')
+                                    font(color='red') 密码不能为空
+                        .modal-footer
+                            button.btn.btn-default(data-dismiss='modal') 关闭
+                            button#register.btn.btn-primary 注册
 
     script(src='/javascripts/socket.io.js')
     script(src='/js/first.js')
