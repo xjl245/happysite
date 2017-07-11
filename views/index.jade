@@ -43,13 +43,16 @@ html
                 .row
                     img.imgsize(src='../images/main.png')
                 .row
-                    h2(style='margin: 40px 20px 0px;font-size: 1.3em;color: #fff;') 简约，纯粹，电影小站
+                    h2(style='margin: 40px 20px 0px;font-size: 1.3em;color: #fff;') 简约，纯粹
                 .row
                     h4(style='margin:20px;font-size: 1.0em;color: #fff;') 崇尚自由，追求简约
                 if hasLogined
-                    .row
+                    .row.hide
                         button.btn.btn-primary(data-toggle='modal' data-target='#mymodalregister') 注册
                         button.btn.btn-primary(style='margin-left:5px') 登录
+                .row
+                    button.btn.btn-primary 最新电影
+                    button.btn.btn-primary(style='margin-left:5px') 最新电视剧
                 .row
                     .bar6
                         input.myinput(placeholder="影片名称")
