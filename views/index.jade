@@ -1,67 +1,80 @@
-doctype html
-html
-    head
-        title= title
-        link(rel='stylesheet', href='/stylesheets/style.css')
-        link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
-        link(rel='stylesheet', href='/stylesheets/mystyle.css')
-        script(src='/javascripts/respond.js')
-        script(src='/javascripts/jquery.min.js')
-        script(src='/javascripts/bootstrap.min.js')
-        script(src='/javascripts/slide.js')
-    body(style='background-color:#95BBD1;')
-        .navbar.my-navbar-default.navbar-fixed-top(role='navigation')
-            .container
-                .navbar-header
-                    button.navbar-toggle(type='button' data-toggle='collapse' data-target='.navbar-collapse')
-                        span.sr-only Toggle navigation
-                        span.icon-bar
-                        span.icon-bar
-                        span.icon-bar
-                    a.my-navbar-brand(href='/')
-                        img(src='../images/logo.jpg' width=34 style='position: padding-bottom:5px')
-                .collapse.navbar-collapse
-                    ul.nav.navbar-nav
-                        li
-                            a(href='/')
-                                span(style='color:black').glyphicon 首页
-                        li
-                            a(href='/recommend')
-                                span(style='color:black').glyphicon 每日推荐
-                        li
-                            a(href='/shop')
-                                span(style='color:black').glyphicon 吃货世界
-                        li
-                            a
-                                span(data-toggle='modal' data-target='#mymodalshare' style='color:black').glyphicon 影片共享
-                    ul.nav.navbar-nav.navbar-right
-                        li
-                            a
-                                span(data-toggle='modal' data-target='#mymodalfb' style='color:black').glyphicon 网站反馈
-        .container(style='margin-top:70px;text-align:center;')
-            .row
-                .row
-                    img.imgsize(src='../images/main.png')
-                .row
-                    h2(style='margin: 40px 20px 0px;font-size: 1.3em;color: #fff;') 简约，纯粹
-                .row
-                    h4(style='margin:20px;font-size: 1.0em;color: #fff;') 崇尚自由，追求简约
-                if hasLogined
-                    .row.hide
-                        button.btn.btn-primary(data-toggle='modal' data-target='#mymodalregister') 注册
-                        button.btn.btn-primary(style='margin-left:5px') 登录
-                .row
-                    button.btn.btn-primary 最新电影
-                    button.btn.btn-primary(style='margin-left:5px') 最新电视剧
-                .row
-                    .bar6
-                        input.myinput(placeholder="影片名称")
-                        button.mybutton 搜索
-                .row(style='margin-top:2px')
-                    p(style='font-size: 0.9em;') 建于 2017-6-1
-                    p(style='font-size: 0.9em;') 欢迎爱影人士加入本站qq群:123456789
-        footer(style='text-align:center;')
-            p(style='font-size: 0.8em;') ©2017 京ICP证030173号  京公网安备11000002000001号 如有侵权请联系删除
+extends layout
+
+block content
+    .container
+        .page-header
+            .navbar.my-navbar-default.navbar-fixed-top(role='navigation')
+                .container
+                    .navbar-header
+                        button.navbar-toggle(type='button' data-toggle='collapse' data-target='.navbar-collapse')
+                            span.sr-only Toggle navigation
+                            span.icon-bar
+                            span.icon-bar
+                            span.icon-bar
+                    .collapse.navbar-collapse
+                        ul.nav.navbar-nav
+                            li
+                                a(href='/')
+                                    span(style='color:black').glyphicon 首页
+                            li
+                                a(href='/recommend')
+                                    span(style='color:black').glyphicon 每日推荐
+                            li
+                                a
+                                    span(data-toggle='modal' data-target='#mymodalshare' style='color:black').glyphicon 影片共享
+                        ul.nav.navbar-nav.navbar-right
+                            li
+                                a
+                                    span(data-toggle='modal' data-target='#mymodalfb' style='color:black').glyphicon 网站反馈
+             .row
+                form.form-horizontal(action="search.js" method="get" role="form")
+                    .input-group.col-md-8.col-md-offset-2
+                        input.form-control(type="text" autofocus="autofocus")
+                        .input-group-btn
+                            button.btn.btn-primary(type="submit") 搜索
+            .row(style='text-align:center;')
+                h2(style='margin-top: 20px; font-size: 1.2em;') 致力于打造令人舒心的电影网站
+        .row
+            .col-md-5.col-md-offset-1
+                .window1
+                    div(style='line-height: 30px;vertical-align: top;padding: 2px 9px 0')
+                        span 最新影片
+                    div(style='padding: 18px 10px;')
+                        p
+                            a(href='/' style='color:black') 金刚：骷髅岛
+                            label(style='float:right') 5.20
+                        p
+                            a(href='/' style='color:black') 天际浩劫
+                            label(style='float:right') 5.20
+                        p
+                            a(href='/' style='color:black') 金瓶梅
+                            label(style='float:right') 5.20
+                        p
+                            a(href='/' style='color:black') 复仇者联盟
+                            label(style='float:right') 5.20
+                        p
+                            a(href='/' style='color:black') 花儿与少年
+                            label(style='float:right') 5.20
+            .col-md-5.col-md-offset-1
+                .window1
+                    div(style='line-height: 30px;vertical-align: top;padding: 2px 9px 0')
+                        span 最新电视剧
+                    div(style='padding: 18px 10px;')
+                        p
+                            a(href='/' style='color:black') 金刚：骷髅岛
+                            label(style='float:right') 5.20
+                        p
+                            a(href='/' style='color:black') 天际浩劫
+                            label(style='float:right') 5.20
+                        p
+                            a(href='/' style='color:black') 金瓶梅
+                            label(style='float:right') 5.20
+                        p
+                            a(href='/' style='color:black') 复仇者联盟
+                            label(style='float:right') 5.20
+                        p
+                            a(href='/' style='color:black') 花儿与少年
+                            label(style='float:right') 5.20
         #mymodalfb.modal.fade(tabindex='-1' role='dialog' aria-labelledby='myModalLabel')
             .modal-dialog(role='document')
                 .modal-content
@@ -96,35 +109,7 @@ html
                     .modal-footer
                         button.btn.btn-default(data-dismiss='modal') 关闭
                         button.btn.btn-primary 保存
-        #mymodalregister.modal.fade(tabindex='-1' role='dialog' aria-labelledby='myModalLabelregister')
-            .modal-dialog(role='document')
-                .modal-content
-                    .modal-header
-                        button.close(data-dismiss='modal' aria-label='close')
-                            span(aria-hidden='true') x
-                        h4#myModalLabelregister.modal-title 注册页
-                    form(method='post' action='/user')
-                        .modal-body
-                            .form-group
-                                label.control-label 用户名:
-                                input#registername.form-control(type='text' placeholder='最多填写10个字' name='username')
-                                h5#registernameerr(style='display:none')
-                                    font(color='red') 用户名不能为空
-                            .form-group
-                                label.control-label 密码:
-                                input#registerpass.form-control(type='password' placeholder='此处输入密码' name='password')
-                                h5#registerpasserr(style='display:none')
-                                    font(color='red') 密码不能为空
-                        .modal-footer
-                            button.btn.btn-default(data-dismiss='modal') 关闭
-                            button#register.btn.btn-primary 注册
-
-    script(src='/javascripts/socket.io.js')
-    script(src='/js/first.js')
-
-
-
-
-
+        #footer
+            p.text-center 123456@copyright
 
 
