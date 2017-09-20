@@ -1,115 +1,77 @@
 extends layout
 
 block content
-    .container
-        .page-header
-            .navbar.my-navbar-default.navbar-fixed-top(role='navigation')
-                .container
-                    .navbar-header
-                        button.navbar-toggle(type='button' data-toggle='collapse' data-target='.navbar-collapse')
-                            span.sr-only Toggle navigation
-                            span.icon-bar
-                            span.icon-bar
-                            span.icon-bar
-                    .collapse.navbar-collapse
-                        ul.nav.navbar-nav
-                            li
-                                a(href='/')
-                                    span(style='color:black').glyphicon 首页
-                            li
-                                a(href='/recommend')
-                                    span(style='color:black').glyphicon 每日推荐
-                            li
-                                a
-                                    span(data-toggle='modal' data-target='#mymodalshare' style='color:black').glyphicon 影片共享
-                        ul.nav.navbar-nav.navbar-right
-                            li
-                                a
-                                    span(data-toggle='modal' data-target='#mymodalfb' style='color:black').glyphicon 网站反馈
-             .row
-                form.form-horizontal(action="search.js" method="get" role="form")
-                    .input-group.col-md-8.col-md-offset-2
-                        input.form-control(type="text" autofocus="autofocus")
-                        .input-group-btn
-                            button.btn.btn-primary(type="submit") 搜索
-            .row(style='text-align:center;')
-                h2(style='margin-top: 20px; font-size: 1.2em;') 致力于打造令人舒心的电影网站
+    .page-header
+        h1.text-center
+            img(src="../images/logo.jpg" height="56px")
         .row
-            .col-md-5.col-md-offset-1
-                .window1
-                    div(style='line-height: 30px;vertical-align: top;padding: 2px 9px 0')
-                        span 最新影片
-                    div(style='padding: 18px 10px;')
-                        p
-                            a(href='/' style='color:black') 金刚：骷髅岛
-                            label(style='float:right') 5.20
-                        p
-                            a(href='/' style='color:black') 天际浩劫
-                            label(style='float:right') 5.20
-                        p
-                            a(href='/' style='color:black') 金瓶梅
-                            label(style='float:right') 5.20
-                        p
-                            a(href='/' style='color:black') 复仇者联盟
-                            label(style='float:right') 5.20
-                        p
-                            a(href='/' style='color:black') 花儿与少年
-                            label(style='float:right') 5.20
-            .col-md-5.col-md-offset-1
-                .window1
-                    div(style='line-height: 30px;vertical-align: top;padding: 2px 9px 0')
-                        span 最新电视剧
-                    div(style='padding: 18px 10px;')
-                        p
-                            a(href='/' style='color:black') 金刚：骷髅岛
-                            label(style='float:right') 5.20
-                        p
-                            a(href='/' style='color:black') 天际浩劫
-                            label(style='float:right') 5.20
-                        p
-                            a(href='/' style='color:black') 金瓶梅
-                            label(style='float:right') 5.20
-                        p
-                            a(href='/' style='color:black') 复仇者联盟
-                            label(style='float:right') 5.20
-                        p
-                            a(href='/' style='color:black') 花儿与少年
-                            label(style='float:right') 5.20
-        #mymodalfb.modal.fade(tabindex='-1' role='dialog' aria-labelledby='myModalLabel')
-            .modal-dialog(role='document')
-                .modal-content
-                    .modal-header
-                        button.close(data-dismiss='modal' aria-label='close')
-                            span(aria-hidden='true') x
-                        h4#myModalLabel.modal-title 问题反馈
-                    .modal-body
-                        .form-group
-                            label.control-label 联系方式:
-                            input.form-control(type='text' placeholder="请留下您的邮箱，以便我们及时回复您。")
-                        .form-group
-                            label.control-label 反馈内容:
-                            textarea.form-control(rows='8' placeholder="本站是个人开发，可能会有一些bug没有发现，欢迎您在使用过程中提出宝贵的建议，感谢对本站的支持。(必填)")
-                    .modal-footer
-                        button.btn.btn-default(data-dismiss='modal') 关闭
-                        button.btn.btn-primary 保存
-        #mymodalshare.modal.fade(tabindex='-1' role='dialog' aria-labelledby='myModalLabelshare')
-            .modal-dialog(role='document')
-                .modal-content
-                    .modal-header
-                        button.close(data-dismiss='modal' aria-label='close')
-                            span(aria-hidden='true') x
-                        h4#myModalLabelshare.modal-title 影片共享
-                    .modal-body
-                        .form-group
-                            label.control-label 影片名称:
-                            input.form-control(type='text' placeholder="尽量写全名哦(小电影的不要)。必填")
-                        .form-group
-                            label.control-label 影片链接:
-                            input.form-control(type='text' placeholder="如果是网盘，链接和密码用分号分割。必填")
-                    .modal-footer
-                        button.btn.btn-default(data-dismiss='modal') 关闭
-                        button.btn.btn-primary 保存
-        #footer
-            p.text-center 123456@copyright
+            form.form-horizontal(action="search.js" method="get" role="form")
+                .input-group.col-md-8.col-md-offset-2
+                    input.form-control(type="text" autofocus="autofocus")
+                    .input-group-btn
+                        button.btn.btn-primary(type="submit") 搜索
+        .row(style='text-align:center;')
+            h2
+                img(src="../images/zhuangbi.png" height="56px")
+    .row
+        .col-md-5.col-md-offset-1
+            .window1
+                div(style='line-height: 30px;vertical-align: top;padding: 2px 9px 0')
+                    span 最新影片
+                div(style='padding: 18px 10px;')
+                    p
+                        a(href='/' style='color:black') 金刚：骷髅岛
+                        label(style='float:right') 5.20
+                    p
+                        a(href='/' style='color:black') 天际浩劫
+                        label(style='float:right') 5.20
+                    p
+                        a(href='/' style='color:black') 金瓶梅
+                        label(style='float:right') 5.20
+                    p
+                        a(href='/' style='color:black') 复仇者联盟
+                        label(style='float:right') 5.20
+                    p
+                        a(href='/' style='color:black') 花儿与少年
+                        label(style='float:right') 5.20
+        .col-md-5.col-md-offset-1
+            .window1
+                div(style='line-height: 30px;vertical-align: top;padding: 2px 9px 0')
+                    span 最新电视剧
+                div(style='padding: 18px 10px;')
+                    p
+                        a(href='/' style='color:black') 金刚：骷髅岛
+                        label(style='float:right') 5.20
+                    p
+                        a(href='/' style='color:black') 天际浩劫
+                        label(style='float:right') 5.20
+                    p
+                        a(href='/' style='color:black') 金瓶梅
+                        label(style='float:right') 5.20
+                    p
+                        a(href='/' style='color:black') 复仇者联盟
+                        label(style='float:right') 5.20
+                    p
+                        a(href='/' style='color:black') 花儿与少年
+                        label(style='float:right') 5.20
+    #mymodalfb.modal.fade(tabindex='-1' role='dialog' aria-labelledby='myModalLabel')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    button.close(data-dismiss='modal' aria-label='close')
+                        span(aria-hidden='true') x
+                    h4#myModalLabel.modal-title 问题反馈
+                .modal-body
+                    .form-group
+                        label.control-label 联系方式:
+                        input.form-control(type='text' placeholder="请留下您的邮箱，以便我们及时回复您。")
+                    .form-group
+                        label.control-label 反馈内容:
+                        textarea.form-control(rows='8' placeholder="本站是个人开发，可能会有一些bug没有发现，欢迎您在使用过程中提出宝贵的建议，感谢对本站的支持。(必填)")
+                .modal-footer
+                    button.btn.btn-default(data-dismiss='modal') 关闭
+                    button.btn.btn-primary 保存
+    #footer
+        p.text-center 123456@copyright
 
 

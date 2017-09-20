@@ -1,70 +1,91 @@
 extends layout
 
 block content
-    .container
-        .page-header
-            h1.text-center
-                img(src="../images/logo.jpg" height="56px")
-            form.form-horizontal(action="search.js" method="get" role="form")
-                .input-group.col-md-8.col-md-offset-2
-                    input.form-control(type="text" autofocus="autofocus")
-                    .input-group-btn
-                        button.btn.btn-primary(type="submit") 搜索
-        <br/>
-        .row
-            #accordion.panel-group
-                each val in films
-                    .panel.panel-info
-                        .panel-heading
-                            h4.panel-title
-                                a(data-toggle="collapse" data-parent="#accordion" href="\##{val.id}" style="text-decoration :none")
-                                    | #{val.filmTitle}
-                        if val.id == "1"
-                            div.panel-collapse.collapse.in(id="#{val.id}")
-                                .panel-body
-                                    | #{val.state}
-                                    <br/>
-                                    <br/>
-                                    .table-responsive
-                                        table.table.table-striped.table-hover
-                                            thead
+    .page-header
+        h1.text-center
+            img(src="../images/logo.jpg" height="56px")
+        form.form-horizontal(action="search.js" method="get" role="form")
+            .input-group.col-md-8.col-md-offset-2
+                input.form-control(type="text" autofocus="autofocus")
+                .input-group-btn
+                    button.btn.btn-primary(type="submit") 搜索
+    <br/>
+    .row
+        #accordion.panel-group
+            each val in films
+                .panel.panel-info
+                    .panel-heading
+                        h4.panel-title
+                            a(data-toggle="collapse" data-parent="#accordion" href="\##{val.id}" style="text-decoration :none")
+                                | #{val.filmTitle}
+                    if val.id == "1"
+                        div.panel-collapse.collapse.in(id="#{val.id}")
+                            .panel-body
+                                | #{val.state}
+                                <br/>
+                                <br/>
+                                .table-responsive
+                                    table.table.table-striped.table-hover
+                                        thead
+                                            tr
+                                                th 标题
+                                                th 大小
+                                                th 清晰度
+                                                th 下载方式
+                                        tbody
+                                            each film in filmList
                                                 tr
-                                                    th 标题
-                                                    th 大小
-                                                    th 清晰度
-                                                    th 下载方式
-                                            tbody
-                                                each film in filmList
-                                                    tr
-                                                        th #{film.sourceTitle}
-                                                        th #{film.size}
-                                                        th #{film.clarity}
-                                                        th
+                                                    th #{film.sourceTitle}
+                                                    th #{film.size}
+                                                    th #{film.clarity}
+                                                    th
+                                                        if film.isOwner == true
                                                             a(href="#{film.torrent}") 种子下载&nbsp;&nbsp;&nbsp;
                                                             a(href="#{film.magnetic}") 磁力下载
-                        else
-                            div.panel-collapse.collapse(id="#{val.id}")
-                                .panel-body
-                                    | #{val.state}
-                                    <br/>
-                                    <br/>
-                                    .table-responsive
-                                        table.table.table-striped.table-hover
-                                            thead
+                                                        else
+                                                            a
+                                                                span(data-toggle='modal' data-target='#fromNetFriend').glyphicon 网友提供
+                    else
+                        div.panel-collapse.collapse(id="#{val.id}")
+                            .panel-body
+                                | #{val.state}
+                                <br/>
+                                <br/>
+                                .table-responsive
+                                    table.table.table-striped.table-hover
+                                        thead
+                                            tr
+                                                th 标题
+                                                th 大小
+                                                th 清晰度
+                                                th 下载方式
+                                        tbody
+                                            each film in filmList
                                                 tr
-                                                    th 标题
-                                                    th 大小
-                                                    th 清晰度
-                                                    th 下载方式
-                                            tbody
-                                                each film in filmList
-                                                    tr
-                                                        th #{film.sourceTitle}
-                                                        th #{film.size}
-                                                        th #{film.clarity}
-                                                        th
+                                                    th #{film.sourceTitle}
+                                                    th #{film.size}
+                                                    th #{film.clarity}
+                                                    th
+                                                        if film.isOwner == true
                                                             a(href="#{film.torrent}") 种子下载&nbsp;&nbsp;&nbsp;
                                                             a(href="#{film.magnetic}") 磁力下载
+                                                        else
+                                                            a
+                                                                span(data-toggle='modal' data-target='#fromNetFriend').glyphicon 网友提供
+        #fromNetFriend.modal.fade(tabindex='-1' role='dialog' aria-labelledby='title')
+            .modal-dialog(role='document')
+                .modal-content
+                    .modal-header
+                        button.close(data-dismiss='modal' aria-label='close')
+                            span(aria-hidden='true') x
+                        h4#title.modal-title 网友共享
+                    .modal-body
+                        .form-group
+                            label.control-label 影片链接:
+                            input.form-control(type='text' value='http:www.baidu.com')
+                    .modal-footer
+                        button.btn.btn-default(data-dismiss='modal') 关闭
+
         #footer
             p.text-center 123456@copyright
 
