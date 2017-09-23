@@ -1,6 +1,8 @@
 var request = require('request');
 var cheerio = require('cheerio');
 var iconv = require('iconv-lite');
+var fs = require('fs');
+var bagpipe = require('Bagpipe');
 
 exports.CollectFilmInfo = function (res) {
     //此处电影名从数据库中读来
@@ -18,9 +20,40 @@ exports.CollectFilmInfo = function (res) {
     });
 };
 
-exports.CollectFilmName = function (res) {
+exports.CollectFilmName = function (res) {	
 	var currentYear = 2000;
 	
+	while(1){
+		if(currentYear > 2017)
+		{
+			res('ok');
+			return;
+		}
+		
+		GetCurYearFilms(currentYear);
+		
+		currentYear++;
+	}
+};	
+
+exports.CollectWatchName = function (res) {
+    var currentYear = 2000;
+	
+	while(1){
+		if(currentYear > 2017)
+		{
+			res('ok');
+			return;
+		}
+		
+		GetCurYearWatches(currentYear);
+		
+		currentYear++;
+	}
+};
+
+function GetCurYearFilms(currentYear)
+{
 	var num = '';
 	GetFilmMaxPage(currentYear, function(pageNum)
 	{
@@ -34,93 +67,71 @@ exports.CollectFilmName = function (res) {
 			currentYearUrls.push('http://dianying.2345.com/list/----' + currentYear + '---' + i + '.html');
 		}
 		
-		
 		//开始采集
+		var bag = new bagpipe(10);
 		for(var i = 0; i < currentYearUrls.length; i++)
 		{
-			request({
-			url:currentYearUrls[i],
-			encoding: null
-			},function(error, response, body){
-				if (!error) {
-					var html = iconv.decode(body, 'gbk');
-					var ch = cheerio.load(html);
-					
-					var title = ch('.emTit').children().first().text();
-					res(title);
-				}
-				else{
-					res('collect film error');
-				}
-			});
-		}
-	});		
-};
-	
-	
-	//根据规律取得所有的url
-	/*var filmUrls = [];
-	
-	var partUrl = 'http://dianying.2345.com/list/----2008---2.html';
-	var partUrl1 = 'http://dianying.2345.com/list/----';
-	var partUrl2 = '---';
-	var partUrl3 = '.html';
-	var currentYear = 2000;
-	while(1)
-	{
-		if(currentYear == 2018)
-		{
-			break;
-		}
-		
-		
-		
-		currentYear++;
-	}
-	
-	
-	//循环一步步采集
-	var currentYear = 2000;
-	while(1)
-	{
-		if(currentYear == 2018)
-		{
-			break;
-		}
-		
-		request({
-			url:'http://dianying.2345.com/list/----2013--.html',
-			encoding: null
-		},function(error, response, body){
-			if (!error) {
-				var html = iconv.decode(body, 'gbk');
-				var ch = cheerio.load(html);
-
-				res(html);
+			var jsonBag = {url:currentYearUrls[i],encoding: null};
+			bag.push(request, jsonBag, collectFilmName());
+			/*request({
+				url:currentYearUrls[i],
+				encoding: null
+				},CollectName()
+			);*/
+			
+			if(i == currentYearUrls.length - 1)
+			{				
 			}
-		});
-	}*/
+		}
+	});	
+}
 
-exports.CollectWatchName = function (res) {
-    request({
-        url: 'http://movie.5snow.com/tv_y2017',
-        encoding: null
-    },function(error, response, body){
-        if (!error) {
-            var html = iconv.decode(body, 'utf8');
-            var ch = cheerio.load(html);
+function GetCurYearWatches(currentYear)
+{
+	var num = '';
+	GetWatchMaxPage(currentYear, function(pageNum){
+		//先得到当前年份的最大页数
+		num = pageNum;
+		
+		//拼出所有url
+		var currentYearUrls = [];
+		for(var i = 1; i <= +num; i++)
+		{
+			currentYearUrls.push('http://tv.2345.com/---' + currentYear + '--' + i + '.html');
+		}
+		
+		//开始采集
+		var bag = new bagpipe(10);
+		for(var i = 0; i < currentYearUrls.length; i++)
+		{
+			var jsonBag = {url:currentYearUrls[i],encoding: null};
+			bag.push(request, jsonBag, collectWatchName());
+			
+			if(i == currentYearUrls.length - 1)
+			{				
+			}
+		}
+	});
+}
 
-            res(html);
-        }
-    });
-};
+function GetWatchMaxPage(currentYear, res)
+{
+	var dstUrl = 'http://tv.2345.com/---' + currentYear + '.html';
+	
+	GetMaxPage(dstUrl, res);
+}
 
 function GetFilmMaxPage(currentYear, res)
 {
 	var dstUrl = 'http://dianying.2345.com/list/----' + currentYear + '--.html';
 	
+	GetMaxPage(dstUrl, res);
+}
+
+function GetMaxPage(url, res)
+{
 	request({
-			url: dstUrl,
+			url: url,
 			encoding: null
 		},function(error, response, body){
 			if (!error) {
@@ -134,19 +145,35 @@ function GetFilmMaxPage(currentYear, res)
 		});
 }
 
-function CollectRes(res)
+function collectFilmName()
+{
+	return CollectName('.emTit', './testFilm.txt');
+}
+
+function collectWatchName()
+{
+	return CollectName('.sTit', './testWatch.txt');
+}
+
+function CollectName(className, filePath)
 {
 	return function(error, response, body){
-				if (!error) {
+				if (!error)
+				{
 					var html = iconv.decode(body, 'gbk');
 					var ch = cheerio.load(html);
 					
-					var title = ch('.emTit').children().first().text();
-					res(title);
+					ch(className).each(function(i, elem){
+						var title = ch(this).children().first().text();
+						
+						fs.writeFile(filePath, title + '\r\n', { 'flag': 'a' }, function(err) {
+							if (err) {
+								console.log(err);
+							}
+						});
+					});
 				}
 				else{
-					res('collect film error');
 				}
 			};
 };
-
