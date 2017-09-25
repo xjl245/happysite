@@ -4,7 +4,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    collect.CollectWatchName(function (html) {
+    collect.CollectFilmInfo(function (html) {
         res.send(html);
     })
 });

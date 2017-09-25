@@ -1,12 +1,12 @@
 var request = require('request');
 var cheerio = require('cheerio');
 var iconv = require('iconv-lite');
-var fs = require('fs');
+var fs = require('fs'); 
 var bagpipe = require('Bagpipe');
 
 exports.CollectFilmInfo = function (res) {
     //此处电影名从数据库中读来
-    var searchName = encodeURI('加勒比海盗');
+    /*var searchName = encodeURI('加勒比海盗');
     request({
         url: 'https://gaoqing.fm/s.php?q=' + searchName,
         encoding: null
@@ -17,7 +17,22 @@ exports.CollectFilmInfo = function (res) {
 
             res(html);
         }
-    });
+    });*/
+	
+	//读出所有电影名或者电视剧名
+	//var films = ['加勒比海盗', '三生三世十里桃花', '权力的游戏', '一年永恒'];
+	var films = ['大鱼海棠'];
+	//循环每一个电影名采集		
+	var bag = new bagpipe(10);
+	for(var i = 0; i < films.length; i++)
+	{
+		var nameEncode = encodeURI(films[i]);
+		
+		var jsonBag = {url:'https://gaoqing.fm/s.php?q=' + nameEncode, encoding: null};
+		bag.push(request, jsonBag, GetFilm());
+		
+		res('OK');
+	}
 };
 
 exports.CollectFilmName = function (res) {	
@@ -145,6 +160,25 @@ function GetMaxPage(url, res)
 		});
 }
 
+function GetFilm()
+{
+	return function(error, response, body){
+				if (!error)
+				{
+					var html = iconv.decode(body, 'utf8');
+					var ch = cheerio.load(html);
+					ch('#result1').children('.row').each(function(i, elem){
+						var detailUrl = ch(this).children('.x-m-side.col-md-3').find('a').attr('href');						
+						//console.log(detailUrl + '\r\n');
+						CollectUrls(detailUrl);
+					});
+				}
+				else{
+					console.log('error');
+				}
+			};
+}
+
 function collectFilmName()
 {
 	return CollectName('.emTit', './testFilm.txt');
@@ -177,3 +211,27 @@ function CollectName(className, filePath)
 				}
 			};
 };
+
+function CollectUrls(detailUrl)
+{
+	request({
+			url: detailUrl,
+			encoding: null
+		},function(error, response, body){
+			if (!error) {
+				var html = iconv.decode(body, 'utf8');
+				var ch = cheerio.load(html);
+				
+				ch('#cili').find('tr').each(function(i, elem){
+					var info = ch(this);
+					var name = info.find('b').text();
+					var size  =info.find('span')('.label.label-warning').text();
+					//var size = info.children('.label.label-warning').text();
+					var pixel = info.children('.label.label-danger').text();
+					var zz = info.children('.btn-info.btn-sm').attr('href');
+					var cili = info.children('.btn-primary.btn-sm').attr('href');
+					console.log(name + ' ' + size + ' ' + pixel + ' ' + zz + ' ' + cili + '\r\n');
+				});
+			}
+		});
+}
