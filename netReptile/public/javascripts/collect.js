@@ -167,7 +167,7 @@ function GetFilm()
 					var html = iconv.decode(body, 'utf8');
 					var ch = cheerio.load(html);
 					ch('#result1').children('.row').each(function(i, elem){
-						var realName = ch(this).children('.col-md-9').find('h4').children().first().text();
+						var realName = ch(this).children('.col-md-9').find('h4').text();
 						var detailUrl = ch(this).children('.x-m-side.col-md-3').find('a').attr('href');
 						CollectUrls(detailUrl, realName);
 					});
@@ -218,26 +218,33 @@ function CollectUrls(detailUrl, realName)
 			encoding: null
 		},function(error, response, body){
 			if (!error) {
-				console.log(realName);
+				var urlName = [];
+				var zz = [];
+				var cili = [];
+				var sizes = [];
+				var pixels = [];
+				
 				var html = iconv.decode(body, 'utf8');
 				var ch = cheerio.load(html);
 				
 				ch('#cili').find('tr').each(function(i, elem){
 					var info = ch(this);
 					
-					if(!info.hasClass('hidden-cililian-btn') && !info.hasClass('show-cililian-btn')){
-						
+					if(!info.hasClass('hidden-cililian-btn') && !info.hasClass('show-cililian-btn')){						
 					
 
 						var name = info.find('b').text();
-						console.log(name);
+						urlName.push(name);
+						//console.log(name);
 
 						info.find('a').each(function(j, val){
 							if(j === 0){
-								console.log('种子' + ch(this).attr('href'))
+								//console.log('种子' + ch(this).attr('href'))
+								zz.push(ch(this).attr('href'));
 							}
 							else {
-								console.log('磁力' + ch(this).attr('href'))
+								//console.log('磁力' + ch(this).attr('href'))
+								cili.push(ch(this).attr('href'));
 							}
 						});
 
@@ -245,15 +252,31 @@ function CollectUrls(detailUrl, realName)
 							var spanInfo = ch(this);
 							if(spanInfo.hasClass('label') && spanInfo.hasClass('label-warning'))	{
 								var size = spanInfo.text();
-								console.log(size);
+								sizes.push(size);
+								//console.log(size);
 							}
 							if(spanInfo.hasClass('label') && spanInfo.hasClass('label-danger')){
 								var pixel = spanInfo.text();
-								console.log(pixel);
+								pixels.push(pixel);
+								//console.log(pixel);
 							}
 						});
 					}
 				});
+				
+				for(var i = 0; i < urlName.length; i++){
+					WriteInfo(realName, urlName[i], zz[i], cili[i], sizes[i], pixels[i]);
+				}
 			}
 		});
+}
+
+function WriteInfo(realName, urlName, zz, cili, size, pixel)
+{
+	var content = '电影名：' + realName + '-------------------\r\nurl名字：' + urlName + '\r\n种子：' + zz + '\r\n磁力：' + cili + '\r\n大小' + size + '\r\n清晰度：' + pixel + '\r\n\r\n';
+	fs.writeFile('./testUrls.txt', content, { 'flag': 'a' }, function(err) {
+		if (err) {
+			console.log(err);
+		}
+	});
 }
