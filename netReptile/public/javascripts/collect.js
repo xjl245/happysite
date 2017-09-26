@@ -168,9 +168,8 @@ function GetFilm()
 					var ch = cheerio.load(html);
 					ch('#result1').children('.row').each(function(i, elem){
 						var realName = ch(this).children('.col-md-9').find('h4').children().first().text();
-						console.log(realName + '/////////');
 						var detailUrl = ch(this).children('.x-m-side.col-md-3').find('a').attr('href');
-						CollectUrls(detailUrl);
+						CollectUrls(detailUrl, realName);
 					});
 				}
 				else{
@@ -212,42 +211,48 @@ function CollectName(className, filePath)
 			};
 };
 
-function CollectUrls(detailUrl)
+function CollectUrls(detailUrl, realName)
 {
 	request({
 			url: detailUrl,
 			encoding: null
 		},function(error, response, body){
 			if (!error) {
+				console.log(realName);
 				var html = iconv.decode(body, 'utf8');
 				var ch = cheerio.load(html);
 				
 				ch('#cili').find('tr').each(function(i, elem){
 					var info = ch(this);
+					
+					if(!info.hasClass('hidden-cililian-btn') && !info.hasClass('show-cililian-btn')){
+						
+					
 
-					var name = info.find('b').text();
-					console.log(name);
+						var name = info.find('b').text();
+						console.log(name);
 
-                    info.find('a').each(function(j, val){
-                    	if(j === 0){
-                    		console.log('种子' + ch(this).attr('href'))
-						}
-						else {
-                            console.log('磁力' + ch(this).attr('href'))
-						}
-					});
+						info.find('a').each(function(j, val){
+							if(j === 0){
+								console.log('种子' + ch(this).attr('href'))
+							}
+							else {
+								console.log('磁力' + ch(this).attr('href'))
+							}
+						});
 
-                    info.find('span').each(function(j, value){
-                    	var spanInfo = ch(this);
-                    	if(spanInfo.hasClass('label') && spanInfo.hasClass('label-warning'))	{
-                            var size = spanInfo.text();
-                            console.log(size);
-						}
-						if(spanInfo.hasClass('label') && spanInfo.hasClass('label-danger')){
-							var pixel = spanInfo.text();
-                            console.log(pixel);
-						}
-					});
+						info.find('span').each(function(j, value){
+							var spanInfo = ch(this);
+							if(spanInfo.hasClass('label') && spanInfo.hasClass('label-warning'))	{
+								var size = spanInfo.text();
+								console.log(size);
+							}
+							if(spanInfo.hasClass('label') && spanInfo.hasClass('label-danger')){
+								var pixel = spanInfo.text();
+								console.log(pixel);
+							}
+						});
+					}
 				});
 			}
 		});
