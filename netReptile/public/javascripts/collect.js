@@ -229,13 +229,14 @@ function CollectUrls(detailUrl, realName)
 				
 				var html = iconv.decode(body, 'utf8');
 				var ch = cheerio.load(html);
+
+				//剧情
+				var gut = ch('#des-ex').text();
 				
 				ch('#cili').find('tr').each(function(i, elem){
 					var info = ch(this);
 					
-					if(!info.hasClass('hidden-cililian-btn') && !info.hasClass('show-cililian-btn')){						
-					
-
+					if(!info.hasClass('hidden-cililian-btn') && !info.hasClass('show-cililian-btn')){
 						var name = info.find('b').text();
 						urlName.push(name);
 						//console.log(name);
@@ -268,15 +269,15 @@ function CollectUrls(detailUrl, realName)
 				});
 				
 				for(var i = 0; i < urlName.length; i++){
-					WriteInfo(realName, urlName[i], zz[i], cili[i], sizes[i], pixels[i]);
+					WriteInfo(gut, realName, urlName[i], zz[i], cili[i], sizes[i], pixels[i]);
 				}
 			}
 		});
 }
 
-function WriteInfo(realName, urlName, zz, cili, size, pixel)
+function WriteInfo(gut, realName, urlName, zz, cili, size, pixel)
 {
-	var content = '电影名：' + realName + '-------------------\r\nurl名字：' + urlName + '\r\n种子：' + zz + '\r\n磁力：' + cili + '\r\n大小' + size + '\r\n清晰度：' + pixel + '\r\n\r\n';
+	var content = '剧情：'+ gut + '\r\n电影名：' + realName + '-------------------\r\nurl名字：' + urlName + '\r\n种子：' + zz + '\r\n磁力：' + cili + '\r\n大小' + size + '\r\n清晰度：' + pixel + '\r\n\r\n';
 	fs.writeFile('./testUrls.txt', content, { 'flag': 'a' }, function(err) {
 		if (err) {
 			console.log(err);
