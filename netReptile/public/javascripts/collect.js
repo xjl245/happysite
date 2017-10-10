@@ -19,9 +19,9 @@ exports.CollectFilmInfo = function (res) {
         }
     });*/
 	
-	//读出所有电影名或者电视剧名
+	//读出所有电影名或者电视剧
 	//var films = ['加勒比海盗', '三生三世十里桃花', '权力的游戏', '一年永恒'];
-	//var films = ['大鱼海棠', '大护法'];
+	//var films = ['大鱼海棠'];
 	var films = ['加勒比海盗'];
 	//循环每一个电影名采集		
 	var bag = new bagpipe(10);
@@ -198,12 +198,15 @@ function CollectName(className, filePath)
 					
 					ch(className).each(function(i, elem){
 						var title = ch(this).children().first().text();
+						var obj = {title: title};
 						
-						fs.writeFile(filePath, title + '\r\n', { 'flag': 'a' }, function(err) {
-							if (err) {
-								console.log(err);
-							}
-						});
+						if(FilterName(obj)){
+							fs.writeFile(filePath, trim(obj.title) + '\r\n', { 'flag': 'a' }, function(err) {
+								if (err) {
+									console.log(err);
+								}
+							});
+						}
 					});
 				}
 				else{
@@ -279,4 +282,46 @@ function WriteInfo(realName, urlName, zz, cili, size, pixel)
 			console.log(err);
 		}
 	});
+}
+
+function FilterName(obj){
+	var filtersEqualDel = ['\r\n', '\n'];
+	var filterContainsDel = ['微电影', '微电', '优酷', '京畿道', '北京国际电影', '好莱坞', 'BBC：', 'KBS：', '《'];
+	var filtersCut = ['（', '…', '[', '1：', '2：', '3：', '4：', '5：', '6：', '7：', '8：', '9：', '10：'
+						, '第1季', '第2季', '第3季', '第4季', '第5季', '第6季', '第7季', '第8季', '第9季', '第10季', '第11季', '第12季'
+						, '第一季', '第二季', '第三季', '第四季', '第五季', '第六季', '第七季', '第八季', '第九季', '第十季', '第十一季', '第十二季', '未删'
+						, '电影版', '粤语', '国语', '英语'];
+	
+	for(var i = 0; i < filtersEqualDel.length; i++){
+		if(obj.title === filtersEqualDel[i]){
+			return false;
+		}
+	}
+	
+	for(var i = 0; i < filterContainsDel.length; i++){
+		if(IsContains(obj.title, filterContainsDel[i])){
+			return false;
+		}
+	}	
+	
+	for(var i = 0; i < filtersCut.length; i++){
+		if(IsContains(obj.title, filtersCut[i])){
+			obj.title = obj.title.substr(0, obj.title.indexOf(filtersCut[i]));
+		}
+	}
+
+	
+	return true;
+}
+
+//小函数
+function IsContains(source, dest){
+	if(source.indexOf(dest) >= 0){
+		return true;
+	}
+	return false;
+}
+
+function trim(str){
+	return str.replace(/(^\s*)|(\s*$)/g, "");
 }

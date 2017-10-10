@@ -7,6 +7,14 @@ router.get('/', function(req, res, next) {
     collect.CollectFilmInfo(function (html) {
         res.send(html);
     })
+	
+	/* collect.CollectFilmName(function (html) {
+        res.send(html);
+    }) */
+	
+	/* collect.CollectWatchName(function (html) {
+        res.send(html);
+    }) */
 });
 
 module.exports = router;
