@@ -3,6 +3,9 @@ var cheerio = require('cheerio');
 var iconv = require('iconv-lite');
 var fs = require('fs'); 
 var bagpipe = require('Bagpipe');
+var db = require('./mysql-pool');
+var util = require('util');
+
 
 exports.CollectFilmInfo = function (res) {
     //此处电影名从数据库中读来
@@ -87,14 +90,9 @@ function GetCurYearFilms(currentYear)
 		{
 			var jsonBag = {url:currentYearUrls[i],encoding: null};
 			bag.push(request, jsonBag, collectFilmName());
-			/*request({
-				url:currentYearUrls[i],
-				encoding: null
-				},CollectName()
-			);*/
 			
 			if(i == currentYearUrls.length - 1)
-			{				
+			{
 			}
 		}
 	});	
@@ -180,15 +178,17 @@ function GetFilm()
 
 function collectFilmName()
 {
-	return CollectName('.emTit', './testFilm.txt');
+	//return CollectName('.emTit', './testFilm.txt');
+	return CollectName('.emTit', 0);
 }
 
 function collectWatchName()
 {
-	return CollectName('.sTit', './testWatch.txt');
+	//return CollectName('.sTit', './testWatch.txt');
+	return CollectName('.sTit', 1);
 }
 
-function CollectName(className, filePath)
+function CollectName(className, type)
 {
 	return function(error, response, body){
 				if (!error)
@@ -200,12 +200,17 @@ function CollectName(className, filePath)
 						var title = ch(this).children().first().text();
 						var obj = {title: title};
 						
+						//每采集一个名字往sql语句加一个，采集到100个时开始插入,另外判断当前是否是最后一页
 						if(FilterName(obj)){
-							fs.writeFile(filePath, trim(obj.title) + '\r\n', { 'flag': 'a' }, function(err) {
+							var sql = util.format("insert into filmname(name, type) values('%s', %s)", trim(obj.title), type);
+							/* db.con(sql, function(result){
+								//res.send(result);
+							}); */
+							/* fs.writeFile(filePath, trim(obj.title) + '\r\n', { 'flag': 'a' }, function(err) {
 								if (err) {
 									console.log(err);
 								}
-							});
+							}); */
 						}
 					});
 				}
