@@ -1,5 +1,5 @@
 var express = require('express');
-var collect = require('../public/javascripts/collect');
+var collect = require('../public/javascripts/collect1');
 var router = express.Router();
 var db = require('../public/javascripts/mysql-pool');
 
