@@ -9,8 +9,8 @@ var async = require('async');
 var fs = require('fs'); 
 
 var bag = new bagpipe(10);
-//var years = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017];
-var years = [2000];
+var years = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017];
+//var years = [2000];
 exports.CollectFilmName = function (res) {
 	//循环每一年
 	async.eachSeries(years, function(curYear, callback){
@@ -42,6 +42,7 @@ var GetCurYearFilm = function(curYear, res){
 		function(list, cb)
 		{
 			//将所有当前年份的电影名按100个一组存入数据库
+			SaveFilmName(list);
 			cb(null);
 		}
 	], function(err){
@@ -117,11 +118,11 @@ function GetUrlFilmName(url, callback)
 
 function GetFilmName(callback)
 {
-	return CollectName('.emTit', 0, callback);
+	return CollectName('.emTit', callback);
 }
 
 //解析网页得到电影名
-function CollectName(className, type, callback)
+function CollectName(className, callback)
 {
 	return function(error, response, body){
 				if (!error)
@@ -136,16 +137,6 @@ function CollectName(className, type, callback)
 						
 						if(FilterName(obj)){
 							names.push(obj.title);
-							//callback(error, names);
-							//var sql = util.format("insert into filmname(name, type) values('%s', %s)", trim(obj.title), type);
-							/* db.con(sql, function(result){
-								//res.send(result);
-							}); */
-							/* fs.writeFile(filePath, trim(obj.title) + '\r\n', { 'flag': 'a' }, function(err) {
-								if (err) {
-									console.log(err);
-								}
-							}); */
 						}
 					});
 					callback(null, names);
@@ -196,4 +187,24 @@ function IsContains(source, dest){
 
 function trim(str){
 	return str.replace(/(^\s*)|(\s*$)/g, "");
+}
+
+//将名字按没100个存入数据库
+function SaveFilmName(list){
+	var sql = 'insert into filmname(name, type) values';
+	var sqlAdds = [];
+	for(var i = 0; i < list.length; i++){				
+		var sqlAdd = util.format("('%s', %d)", list[i], 0);
+		sqlAdds.push(sqlAdd);
+		
+		if((i + 1) % 100 === 0 || i === list.length - 1){
+			sql += sqlAdds.join(',');
+			db.con(sql, function(result){
+				
+			});
+			
+			sql = 'insert into filmname(name, type) values';
+			sqlAdds = [];
+		}
+	}
 }
