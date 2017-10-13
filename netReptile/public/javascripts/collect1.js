@@ -12,9 +12,27 @@ var bag = new bagpipe(10);
 var years = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017];
 //var years = [2000];
 exports.CollectFilmName = function (res) {
-	//循环每一年
+	//循环每一年	
+	db.con('TRUNCATE TABLE filmname', function(err, result){
+		async.eachSeries(years, function(curYear, callback){
+			GetCurYearFilm(curYear, function(err){
+				callback(err);
+			});
+		}, function(err){
+			if(!err){
+				res('OK');
+			}
+			else{
+				console.log(err);
+			}
+		});
+	});
+}
+
+exports.CollectWatchName = function (res) {
+	//循环每一年	
 	async.eachSeries(years, function(curYear, callback){
-		GetCurYearFilm(curYear, function(err){
+		GetCurYearWatch(curYear, function(err){
 			callback(err);
 		});
 	}, function(err){
@@ -41,12 +59,73 @@ var GetCurYearFilm = function(curYear, res){
 		},
 		function(list, cb)
 		{
-			//将所有当前年份的电影名按100个一组存入数据库
-			SaveFilmName(list);
+			//得到所有的sql语句
+			GetSqls(list, 0, cb);
+		},
+		function(sqls, cb)
+		{
+			//保存名称
+			for(var i = 0; i < sqls.length; i++){
+				db.con(sqls[i], function(err, result){
+					if(err)
+					{
+						cb(err);
+					}
+				});
+			}
 			cb(null);
 		}
 	], function(err){
 		res(err);
+	});
+}
+
+var GetCurYearWatch = function(curYear, res){
+	async.waterfall([
+		function(cb)  
+		{  
+			//得到当前年份所有的url并拼接成list
+			GetWatchNameUrls(curYear, cb);  
+		},
+		function(urls, cb)
+		{
+			//得到当前年份所有url的电影名
+			GetUrlsWatchName(urls, cb);
+		},
+		function(list, cb)
+		{
+			//得到所有的sql语句
+			GetSqls(list, 1, cb);
+		},
+		function(sqls, cb)
+		{
+			//保存名称
+			for(var i = 0; i < sqls.length; i++){
+				db.con(sqls[i], function(err, result){
+					if(err)
+					{
+						cb(err);
+					}
+				});
+			}
+			cb(null);
+		}
+	], function(err){
+		res(err);
+	});
+}
+
+function GetWatchNameUrls(curYear, cb)
+{
+	GetWatchMaxPage(curYear, function(num){
+		//拼出所有url
+		var currentYearUrls = [];
+		for(var i = 1; i <= +num; i++)
+		{
+			currentYearUrls.push('http://tv.2345.com/---' + curYear + '--' + i + '.html');
+		}
+		
+		cb(null, currentYearUrls);
 	});
 }
 
@@ -67,6 +146,13 @@ function GetFilmNameUrls(curYear, cb)
 function GetFilmMaxPage(curYear, res)
 {
 	var dstUrl = 'http://dianying.2345.com/list/----' + curYear + '--.html';
+	
+	GetMaxPage(dstUrl, res);
+}
+
+function GetWatchMaxPage(curYear, res)
+{
+	var dstUrl = 'http://tv.2345.com/---' + curYear + '.html';
 	
 	GetMaxPage(dstUrl, res);
 }
@@ -109,6 +195,34 @@ function GetUrlsFilmName(urls, cb)
 	});
 }
 
+//所有url电视剧名
+function GetUrlsWatchName(urls, cb)
+{
+	var curYearWatchNames = [];
+	async.eachSeries(urls, function(url, callback){
+		GetUrlWatchName(url, function(err, names){
+			for(var i = 0; i < names.length; i++){
+				curYearWatchNames.push(names[i]);
+			}
+			callback(err);
+		});
+	}, function(err){
+		if(!err){
+			cb(null, curYearWatchNames);
+		}
+		else{
+			cb(err);
+		}
+	});
+}
+
+//单个url电视剧名
+function GetUrlWatchName(url, callback)
+{
+	var jsonBag = {url:url,encoding: null};
+	bag.push(request, jsonBag, GetWatchName(callback));
+}
+
 //单个url的电影名
 function GetUrlFilmName(url, callback)
 {
@@ -121,7 +235,12 @@ function GetFilmName(callback)
 	return CollectName('.emTit', callback);
 }
 
-//解析网页得到电影名
+function GetWatchName(callback)
+{
+	return CollectName('.sTit', callback);
+}
+
+//解析网页得到电影名或电视剧名
 function CollectName(className, callback)
 {
 	return function(error, response, body){
@@ -136,7 +255,7 @@ function CollectName(className, callback)
 						var obj = {title: title};
 						
 						if(FilterName(obj)){
-							names.push(obj.title);
+							names.push(trim(obj.title));
 						}
 					});
 					callback(null, names);
@@ -153,7 +272,7 @@ function FilterName(obj){
 	var filtersCut = ['（', '…', '[', '1：', '2：', '3：', '4：', '5：', '6：', '7：', '8：', '9：', '10：'
 						, '第1季', '第2季', '第3季', '第4季', '第5季', '第6季', '第7季', '第8季', '第9季', '第10季', '第11季', '第12季'
 						, '第一季', '第二季', '第三季', '第四季', '第五季', '第六季', '第七季', '第八季', '第九季', '第十季', '第十一季', '第十二季', '未删'
-						, '电影版', '粤语', '国语', '英语'];
+						, '电影版', '粤语', '国语', '英语', '英文','DVD' ,'TV版'];
 	
 	for(var i = 0; i < filtersEqualDel.length; i++){
 		if(obj.title === filtersEqualDel[i]){
@@ -174,6 +293,7 @@ function FilterName(obj){
 	}
 
 	
+	
 	return true;
 }
 
@@ -186,25 +306,108 @@ function IsContains(source, dest){
 }
 
 function trim(str){
-	return str.replace(/(^\s*)|(\s*$)/g, "");
+	return str.replace(/(^\s*)|(\s*$)/g, "").replace(/([0-9])$/, "");
 }
 
-//将名字按没100个存入数据库
-function SaveFilmName(list){
+function GetSqls(list, type, cb)
+{
+	var sqls = [];
+	
 	var sql = 'insert into filmname(name, type) values';
 	var sqlAdds = [];
 	for(var i = 0; i < list.length; i++){				
-		var sqlAdd = util.format("('%s', %d)", list[i], 0);
+		var sqlAdd = util.format("('%s', %d)", list[i], type);
 		sqlAdds.push(sqlAdd);
 		
 		if((i + 1) % 100 === 0 || i === list.length - 1){
 			sql += sqlAdds.join(',');
-			db.con(sql, function(result){
-				
-			});
+			sqls.push(sql);
 			
 			sql = 'insert into filmname(name, type) values';
 			sqlAdds = [];
 		}
 	}
+	
+	cb(null, sqls);
+} 
+
+//以下是采集电影种子
+//将数据库中每100条读取出来
+//循环这些名称采集
+//1.先取得搜索之后的页面并分析出结果url和真实电影名称[{realname:xxx, url:xxxx, type:x}]
+//2.循环上面的url取出所有种子并和真实电影名称一起存入数据库[{realname:xxxxxxxxx, urls:[], type:x}]
+//{urlName:xxxxx,zhongzi:xxxxx,cili:xxxxx,size:xxxx,pixel:xxxx}
+
+export CollectFilmInfo = function(res)
+{
+	async.waterfall([
+		function(cb)  
+		{  
+			//得到100条名字
+			//GetWatchNameUrls(curYear, cb);  
+		},
+		function(nameList, cb)
+		{
+			//循环这些名称采集出真正的名字和url以及其类型
+			//GetUrlsWatchName(urls, cb);
+			var allUrls = [];
+			async.eachSeries(nameList, function(name, callback){
+				GetUrlsByName(name, allUrls, function(err){
+					callback(err);
+				});
+				}, function(err){
+					cb(err, allUrls);
+				});
+		},
+		function(urlList, cb)
+		{
+			//循环所有url采集出名字对应的种子等信息
+			//GetSqls(list, 1, cb);
+		},
+		function(data, cb)
+		{
+			//将所有信息存入数据库
+			cb(null);
+		}
+	], function(err){
+		res(err);
+	});
+}
+
+function GetUrlsByName(name, allUrls, res)
+{
+	var nameEncode = encodeURI(name);
+	var jsonBag = {url:'https://gaoqing.fm/s.php?q=' + nameEncode, encoding: null};
+	bag.push(request, jsonBag, GetUrls(allUrls, res));
+}
+
+function GetUrls(allUrls, res)
+{
+	var urlInfo = {};
+	return function(error, response, body){
+				if (!error)
+				{
+					var html = iconv.decode(body, 'utf8');
+					var ch = cheerio.load(html);
+					ch('#result1').children('.row').each(function(i, elem){
+						var realName = ch(this).children('.col-md-9').find('h4').text();
+						var detailUrl = ch(this).children('.x-m-side.col-md-3').find('a').attr('href');
+						
+						var type = 0;
+						ch(this).children('.col-md-9').find('#viewfilm').children('.x-m-label').each(function(j, elem){
+							if(elem.text() === '集数'){
+								type = 1;
+							}
+						});
+						
+						urlInfo.realName = realName;
+						urlInfo.url = detailUrl;
+						urlInfo.push(type);
+						allUrls.push(urlInfo);
+					});
+				}
+				else{
+					res(error);
+				}
+			};
 }
