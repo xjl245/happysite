@@ -11,17 +11,17 @@ router.get('/', function(req, res, next) {
 	/* db.con("insert into filmname values(name, '死亡的尽头')", function(result){
 		res.send(result);
 	}); */
-    /* collect.CollectFilmInfo(function (html) {
+    collect.CollectFilmInfo(function (html) {
         res.send(html);
-    }) */
+    })
 	
 	/*  collect.CollectFilmName(function (html) {
 		res.send(html);
     })  */
 	
-	collect.CollectWatchName(function (html) {
+	/* collect.CollectWatchName(function (html) {
         res.send(html);
-    })
+    }) */
 });
 
 module.exports = router;

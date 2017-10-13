@@ -338,35 +338,46 @@ function GetSqls(list, type, cb)
 //2.循环上面的url取出所有种子并和真实电影名称一起存入数据库[{realname:xxxxxxxxx, urls:[], type:x}]
 //{urlName:xxxxx,zhongzi:xxxxx,cili:xxxxx,size:xxxx,pixel:xxxx}
 
-export CollectFilmInfo = function(res)
+exports.CollectFilmInfo = function(res)
 {
 	async.waterfall([
 		function(cb)  
 		{  
 			//得到100条名字
-			//GetWatchNameUrls(curYear, cb);  
+			//cb(null, ['加勒比海盗', '那年花开月正圆', '电话撒哈达萨']); 
+			cb(null, ['加勒比海盗']); 
 		},
 		function(nameList, cb)
 		{
 			//循环这些名称采集出真正的名字和url以及其类型
-			//GetUrlsWatchName(urls, cb);
 			var allUrls = [];
 			async.eachSeries(nameList, function(name, callback){
 				GetUrlsByName(name, allUrls, function(err){
 					callback(err);
 				});
-				}, function(err){
-					cb(err, allUrls);
-				});
+			}, function(err){
+				cb(err, allUrls);
+			});
 		},
 		function(urlList, cb)
 		{
+			//console.log(urlList.length);
 			//循环所有url采集出名字对应的种子等信息
-			//GetSqls(list, 1, cb);
+			var allInfos = [];
+			async.eachSeries(urlList, function(url, callback){
+				GetAllInfo(url.url, function(err, gut, infos){
+					allInfos.push({realName:url.realName, gut:gut, infos:infos, type:url.type});
+					//console.log(allInfos[0].infos)
+					callback(err);
+				}); 
+			}, function(err){
+				cb(err, allInfos);
+			});
 		},
-		function(data, cb)
+		function(allInfos, cb)
 		{
 			//将所有信息存入数据库
+			//console.log(allInfos);
 			cb(null);
 		}
 	], function(err){
@@ -383,31 +394,107 @@ function GetUrlsByName(name, allUrls, res)
 
 function GetUrls(allUrls, res)
 {
-	var urlInfo = {};
 	return function(error, response, body){
 				if (!error)
 				{
 					var html = iconv.decode(body, 'utf8');
 					var ch = cheerio.load(html);
 					ch('#result1').children('.row').each(function(i, elem){
-						var realName = ch(this).children('.col-md-9').find('h4').text();
-						var detailUrl = ch(this).children('.x-m-side.col-md-3').find('a').attr('href');
+						var realName = ch(elem).children('.col-md-9').find('h4').text();
+						var detailUrl = ch(elem).children('.x-m-side.col-md-3').find('a').attr('href');
+						//console.log(realName + ': ' +　detailUrl);
 						
 						var type = 0;
-						ch(this).children('.col-md-9').find('#viewfilm').children('.x-m-label').each(function(j, elem){
-							if(elem.text() === '集数'){
+						ch(elem).children('.col-md-9').find('#viewfilm').children('.x-m-label').each(function(j, elem1){
+							//console.log(ch(elem1).text());
+							if(ch(elem1).text() === '集数'){
 								type = 1;
 							}
-						});
+						});						
 						
+						var urlInfo = {};
 						urlInfo.realName = realName;
 						urlInfo.url = detailUrl;
-						urlInfo.push(type);
+						urlInfo.type = type;
+						//console.log(realName);
 						allUrls.push(urlInfo);
 					});
 				}
 				else{
-					res(error);
 				}
+				
+				res(error);
 			};
+}
+
+function GetAllInfo(url, res)
+{
+	request({
+			url: url,
+			encoding: null
+		},function(error, response, body){
+			if (!error) {				
+				var html = iconv.decode(body, 'utf8');
+				var ch = cheerio.load(html);
+
+				//剧情
+				var gut = '';
+				if((gut = ch('#des-ex').text()) === ''){
+					gut = ch('#des-full').text();
+				}
+				var infos = [];
+				ch('#cili').find('tr').each(function(i, elem){
+					var info = {};					
+					if(!ch(elem).hasClass('hidden-cililian-btn') && !ch(elem).hasClass('show-cililian-btn')){
+						info.urlName = ch(elem).find('b').text();
+						//urlName.push(name);
+						//console.log(info.urlName);
+
+						ch(elem).find('a').each(function(j, val){
+							if(j === 0){
+								//console.log('种子' + ch(this).attr('href'))
+								//zz.push(ch(this).attr('href'));
+								info.zz = ch(val).attr('href');
+								//console.log(info.zz);
+							}
+							else {
+								//console.log('磁力' + ch(this).attr('href'))
+								//cili.push(ch(this).attr('href'));
+								info.cili = ch(val).attr('href')
+								//console.log(info.cili);
+							}
+						});
+
+						ch(elem).find('span').each(function(j, value){
+							var spanInfo = ch(value);
+							if(spanInfo.hasClass('label') && spanInfo.hasClass('label-warning'))	{
+								//var size = spanInfo.text();
+								//sizes.push(size);
+								//console.log(size);
+								info.size = spanInfo.text();
+								//console.log(info.size);
+							}
+							if(spanInfo.hasClass('label') && spanInfo.hasClass('label-danger')){
+								//var pixel = spanInfo.text();
+								//pixels.push(pixel);
+								//console.log(pixel);
+								info.pixel = spanInfo.text();
+								//console.log(info.pixel);
+							}
+						});
+					}
+					//console.log(info);
+					infos.push(info);
+				});
+				
+				/* for(var i = 0; i < urlName.length; i++){
+					WriteInfo(gut, realName, urlName[i], zz[i], cili[i], sizes[i], pixels[i]);
+				} */
+				//console.log(infos);
+				res(null, gut, infos)
+			}
+			else{
+				res(error);
+			}
+		});
 }
