@@ -5,6 +5,7 @@ var bagpipe = require('Bagpipe');
 var db = require('./mysql-pool');
 var util = require('util');
 var async = require('async');
+var mongo = require('./mongo');
 
 var fs = require('fs'); 
 
@@ -345,7 +346,8 @@ exports.CollectFilmInfo = function(res)
 		{  
 			//得到100条名字
 			//cb(null, ['加勒比海盗', '那年花开月正圆', '电话撒哈达萨']); 
-			cb(null, ['加勒比海盗']); 
+			//cb(null, ['加勒比海盗']); 
+			cb(null, ['那年花开月正圆']);
 		},
 		function(nameList, cb)
 		{
@@ -366,7 +368,7 @@ exports.CollectFilmInfo = function(res)
 			var allInfos = [];
 			async.eachSeries(urlList, function(url, callback){
 				GetAllInfo(url.url, function(err, gut, infos){
-					allInfos.push({realName:url.realName, gut:gut, infos:infos, type:url.type});
+					allInfos.push({realName:url.realName, gut:gut, type:url.type, infos:infos});
 					//console.log(allInfos[0].infos)
 					callback(err);
 				}); 
@@ -377,7 +379,9 @@ exports.CollectFilmInfo = function(res)
 		function(allInfos, cb)
 		{
 			//将所有信息存入数据库
-			//console.log(allInfos);
+			for(var i = 0; i < allInfos.length; i++){
+				mongo.Insert(allInfos[i]);
+			}
 			cb(null);
 		}
 	], function(err){
