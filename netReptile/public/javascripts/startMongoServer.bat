@@ -1,0 +1,1 @@
+D:\mongoDB\bin\mongod --dbpath D:\data -storageEngine=mmapv1

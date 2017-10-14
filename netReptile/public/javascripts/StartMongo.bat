@@ -1,0 +1,1 @@
+D:\mongoDB\bin\mongo
