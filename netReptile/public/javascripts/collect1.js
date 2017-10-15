@@ -9,7 +9,7 @@ var mongo = require('./mongo');
 
 var fs = require('fs'); 
 
-var bag = new bagpipe(10);
+var bag = new bagpipe(2);
 var years = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017];
 //var years = [2000];
 exports.CollectFilmName = function (res) {
@@ -347,7 +347,7 @@ exports.CollectFilmInfo = function(res)
 			//得到100条名字
 			//cb(null, ['加勒比海盗', '那年花开月正圆', '电话撒哈达萨']); 
 			//cb(null, ['加勒比海盗']); 
-			cb(null, ['那年花开月正圆']);
+			cb(null, ['那年花开月正圆', '加勒比海盗', '变形金刚', '三生三世十里桃花', '老友记']);
 		},
 		function(nameList, cb)
 		{
@@ -403,7 +403,8 @@ function GetUrls(allUrls, res)
 				{
 					var html = iconv.decode(body, 'utf8');
 					var ch = cheerio.load(html);
-					ch('#result1').children('.row').each(function(i, elem){
+					ch('#result1').children('.row').each(function(i, elem){								
+						console.log(i)
 						var realName = ch(elem).children('.col-md-9').find('h4').text();
 						var detailUrl = ch(elem).children('.x-m-side.col-md-3').find('a').attr('href');
 						//console.log(realName + ': ' +　detailUrl);
@@ -423,11 +424,11 @@ function GetUrls(allUrls, res)
 						//console.log(realName);
 						allUrls.push(urlInfo);
 					});
+					res(null);
 				}
-				else{
-				}
-				
-				res(error);
+				else{								
+					res(error);
+				}	
 			};
 }
 
