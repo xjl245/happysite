@@ -11,7 +11,7 @@ var fs = require('fs');
 //var i = 0;
 var arr = ['那年花开月正圆', '加勒比海盗', '变形金刚', '三生三世十里桃花', '老友记', '侠盗联盟', '高尔夫球手', '极寒之城', '黑暗塔'];
 var data = [];
-var length = 2; //每次取出的长度
+var length = 5; //每次取出的长度
 var index = 0; //当前取出的id
 
 var start = 0;
@@ -93,7 +93,7 @@ function CollectDetailUrls(res){
 	//2.循环第一层所有url取出对应种子信息
 	console.log(data);
 	var allUrls = [];
-	var time = (Math.floor(Math.random()*2+1) + 1) * 1000;
+	var time = (Math.floor(Math.random()*5+5) + 1) * 1000;
 	console.log(time);
 	var i = 0;
 	var timer = setInterval(function(){
@@ -137,7 +137,19 @@ function GetDetailUrls(res)
 					var html = iconv.decode(body, 'utf8');
 					WriteInfo(html);
 					var ch = cheerio.load(html);
-					ch('#result1').children('.row').each(function(i, elem){			
+					AnalyzeHtml(ch, allDetailUrls, 'result1');
+					AnalyzeHtml(ch, allDetailUrls, 'others');
+					res(null, allDetailUrls);
+				}
+				else{
+					console.log(error);					
+					res(error);
+				}	
+			};
+}
+
+function AnalyzeHtml(ch, allDetailUrls, id){
+	ch('#' + id).children('.row').each(function(i, elem){			
 						var realName = ch(elem).children('.col-md-9').find('h4').text();
 						var detailUrl = ch(elem).children('.x-m-side.col-md-3').find('a').attr('href');
 						
@@ -154,13 +166,6 @@ function GetDetailUrls(res)
 						urlInfo.type = type;
 						allDetailUrls.push(urlInfo);
 					});
-					res(null, allDetailUrls);
-				}
-				else{
-					console.log(error);					
-					res(error);
-				}	
-			};
 }
 
 function func(){
