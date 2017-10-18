@@ -20,7 +20,7 @@ var cookies;
 
 function GetData(res){
 	console.log('start-----------------------------------------------');
-	var sql = 'select name from filmname limit ' + start + ',' + length;
+	var sql = 'select distinct name from filmname1 limit ' + start + ',' + length;//先匹配distinct再匹配limit
 	db.con(sql, function(err, rows){
 		if(!err && rows.length === 0){
 			console.log('over');
@@ -31,7 +31,7 @@ function GetData(res){
 			res(null, rows);
 		}	
 		else if(err){
-			console.log('end----------------------');
+			console.log('err end----------------------');
 			res(err);
 		}
 		start += length;
@@ -101,30 +101,30 @@ function CollectDetailUrls(data, res){
 	var timer = setInterval(function(){
 		console.log('CollectDetailUrls:' + i);
 		var nameEncode = encodeURI(data[i].name);	
-		var jsonBag = {url:'https://gaoqing.fm/s.php?q=' + nameEncode, encoding: null, headers: {
+		var jsonBag = {url:'https://gaoqing.fm/s.php?q=' + nameEncode, encoding: null, timeout: time * 3, headers: {
 		  'User-Agent':'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
 		  'Accept':'*/*',
 		  'Referer':'https://www.baidu.com'
 		}};	
 		
 		if(state === 'free'){
-			i++;
 			state = 'padding';
 			request(jsonBag, GetDetailUrls(function(err, urls){
 				if(err){
-					console.log('Get Urls: ' + err);
-					return;
+					console.log('Get Urls: ' + err);					
 				}
-				
-				for(var k = 0; k < urls.length; k++){
-					//console.log(urls[k]);
-					allUrls.push(urls[k]);
-				}
-				if(i === data.length){
-					//console.log(data.length);
-					clearInterval(timer);
-					//data = [];				
-					res(null, allUrls);				
+				else{				
+					for(var k = 0; k < urls.length; k++){
+						//console.log(urls[k]);
+						allUrls.push(urls[k]);
+					}
+					i++;
+					if(i === data.length){
+						//console.log(data.length);
+						clearInterval(timer);
+						//data = [];				
+						res(null, allUrls);				
+					}
 				}
 				state = 'free';
 			}));
@@ -144,7 +144,7 @@ function GetDetailUrls(res)
 						console.log(cookies);
 					} */
 					var html = iconv.decode(body, 'utf8');
-					WriteInfo(html);
+					//WriteInfo(html);
 					var ch = cheerio.load(html);
 					AnalyzeHtml(ch, allDetailUrls, 'result1');
 					AnalyzeHtml(ch, allDetailUrls, 'others');
@@ -159,25 +159,28 @@ function GetDetailUrls(res)
 
 function AnalyzeHtml(ch, allDetailUrls, id){
 	ch('#' + id).children('.row').each(function(i, elem){			
-						var realName = ch(elem).children('.col-md-9').find('h4').text();
-						var detailUrl = ch(elem).children('.x-m-side.col-md-3').find('a').attr('href');
-						
-						var type = 0;
-						ch(elem).children('.col-md-9').find('#viewfilm').children('.x-m-label').each(function(j, elem1){
-							if(ch(elem1).text() === '集数'){
-								type = 1;
-							}
-						});						
-						
-						var urlInfo = {};
-						urlInfo.realName = realName;
-						urlInfo.url = detailUrl;
-						urlInfo.type = type;
-						allDetailUrls.push(urlInfo);
-					});
+		var realName = ch(elem).children('.col-md-9').find('h4').text();
+		var detailUrl = ch(elem).children('.x-m-side.col-md-3').find('a').attr('href');
+		
+		var type = 0;
+		ch(elem).children('.col-md-9').find('#viewfilm').children('.x-m-label').each(function(j, elem1){
+			if(ch(elem1).text() === '集数'){
+				type = 1;
+			}
+		});						
+		
+		var urlInfo = {};
+		urlInfo.realName = realName;
+		urlInfo.url = detailUrl;
+		urlInfo.type = type;
+		allDetailUrls.push(urlInfo);
+	});
 }
 
 function GetInfos(urls, res){
+	if(urls.length === 0){
+		emitter.emit('Read');
+	}
 	console.log(urls);
 	var allInfos = [];
 	var time = (Math.floor(Math.random()* 5 + 2) + 1) * 1000;
@@ -186,30 +189,34 @@ function GetInfos(urls, res){
 	var state = 'free';
 	var timer = setInterval(function(){
 		console.log('GetInfos: ' + i);
-		var jsonBag = {url : urls[i].url, encoding: null, headers: {
+		var jsonBag = {url : urls[i].url, encoding: null, timeout: time * 3, headers: {
 		  'User-Agent':'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
 		  'Accept':'*/*'
 		}};
 		
+		console.log(state);
 		if(state === 'free'){			
 			state = 'padding';
 			request(jsonBag, GetInfo(function(err, gut, infos){	
 				
 				if(err){
 					console.log('Get Deatils: ' + err);
-					return;
+					console.log(err.connect === true);
+					//state = 'free';	
+					//return;
 				}
-				
-				//此处当前面一个url还未采集完，定时时间已经到下面一个，i的值已经等于urls.length 会少采集
-				allInfos.push({realName:urls[i].realName, gut:gut, infos:infos, type: urls[i].type});
-				i++;
-				if(i === urls.length){
-					clearInterval(timer);			
-					res(null, allInfos);
-					//emitter.emit('Read');
-				}
-
-				state = 'free';				
+				else{
+					//此处当前面一个url还未采集完，定时时间已经到下面一个，i的值已经等于urls.length 会少采集
+					allInfos.push({realName:urls[i].realName, gut:gut, infos:infos, type: urls[i].type});
+					i++;
+					if(i === urls.length){
+						clearInterval(timer);			
+						res(null, allInfos);
+						//emitter.emit('Read');
+					}
+					//state = 'free';		
+				}	
+				state = 'free';					
 			}));	
 		}		
 	}, time);
@@ -217,7 +224,8 @@ function GetInfos(urls, res){
 
 function GetInfo(res){
 	return function(error, response, body){
-			if (!error) {				
+		console.log('GetInfo');
+		if (!error) {				
 			var html = iconv.decode(body, 'utf8');
 			var ch = cheerio.load(html);
 
@@ -263,7 +271,7 @@ function GetInfo(res){
 
 function func(){
 	emitter.on('Collect', function(data){
-		CollectDetailUrls(data, function(err, urls){			
+		CollectDetailUrls(data, function(err, urls){				
 			emitter.emit('details', urls);
 		});
 	});
