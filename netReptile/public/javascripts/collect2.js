@@ -1,4 +1,3 @@
-//var testEmit = require('./testEmit');
 var events = require('events'); 
 var emitter = new events.EventEmitter(); 
 var db = require('./mysql-pool');
@@ -8,15 +7,11 @@ var cheerio = require('cheerio');
 var iconv = require('iconv-lite');
 var fs = require('fs'); 
 
-//var i = 0;
 var arr = ['那年花开月正圆', '加勒比海盗', '变形金刚', '三生三世十里桃花', '老友记', '侠盗联盟', '高尔夫球手', '极寒之城', '黑暗塔'];
-//var data = [];
 var length = 1; //每次取出的长度
-var index = 0; //当前取出的id
 
 var start = 0;
 var bag = new bagpipe(2);
-var cookies;
 
 function GetData(res){
 	console.log('start-----------------------------------------------');
@@ -91,7 +86,9 @@ function StartCollect()
 function CollectDetailUrls(data, res){
 	//1.取出第一层所有的url
 	//2.循环第一层所有url取出对应种子信息
+	console.log('data: ');
 	console.log(data);
+	console.log('datalength: ' + data.length);
 	var allUrls = [];
 	var time = (Math.floor(Math.random()*2 + 1) + 1) * 1000;
 	console.log(time);
@@ -113,7 +110,8 @@ function CollectDetailUrls(data, res){
 				if(err){
 					console.log('Get Urls: ' + err);					
 				}
-				else{				
+				else{
+					console.log('length: ' + urls.length);					
 					for(var k = 0; k < urls.length; k++){
 						//console.log(urls[k]);
 						allUrls.push(urls[k]);
@@ -180,7 +178,9 @@ function AnalyzeHtml(ch, allDetailUrls, id){
 function GetInfos(urls, res){
 	if(urls.length === 0){
 		emitter.emit('Read');
+		return;
 	}
+	console.log('urls: ');
 	console.log(urls);
 	var allInfos = [];
 	var time = (Math.floor(Math.random()* 5 + 2) + 1) * 1000;
@@ -197,8 +197,7 @@ function GetInfos(urls, res){
 		console.log(state);
 		if(state === 'free'){			
 			state = 'padding';
-			request(jsonBag, GetInfo(function(err, gut, infos){	
-				
+			request(jsonBag, GetInfo(function(err, gut, infos){					
 				if(err){
 					console.log('Get Deatils: ' + err);
 					console.log(err.connect === true);
