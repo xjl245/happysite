@@ -54,6 +54,18 @@ exports.Insert = function(jsonData, callback){
     });
 }
 
+exports.Find = function(condition, callback){
+	var json = {realName:{$regex:condition, $options:"$i"}};
+	filmDB.find(json, function(err, docs){
+		if(err){
+			callback(err);
+		}
+		else{
+			callback(null, docs);
+		}
+	});
+}
+
 exports.Remove = function(){
 	
 }
