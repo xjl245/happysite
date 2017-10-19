@@ -5,6 +5,7 @@ var bagpipe = require('Bagpipe');
 var request = require('request').defaults({jar: true});
 var cheerio = require('cheerio');
 var iconv = require('iconv-lite');
+var mongo = require('./mongo');
 var fs = require('fs'); 
 
 var arr = ['那年花开月正圆', '加勒比海盗', '变形金刚', '三生三世十里桃花', '老友记', '侠盗联盟', '高尔夫球手', '极寒之城', '黑暗塔'];
@@ -285,8 +286,14 @@ function func(){
 		//console.log('details:  '+ urls[2].realName);
 		GetInfos(urls, function(err, allInfos){
 			for(var i = 0; i < allInfos.length; i++){
-				console.log(allInfos[i].realName);
+				mongo.Insert(allInfos[i], function(err){
+					if(err){
+						console.log(err);
+					}
+				});
+				//console.log(allInfos[i].realName);
 			}
+			
 			emitter.emit('Read');
 		});
 	});

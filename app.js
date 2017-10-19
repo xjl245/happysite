@@ -10,6 +10,7 @@ var recommend = require('./routes/recommend');
 var shop = require('./routes/shop');
 var user = require('./routes/user');
 var filmList = require('./routes/filmList');
+var search = require('./routes/search');
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use('/recommend', recommend);
 app.use('/shop', shop);
 app.use('/user', user);
 app.use('/films', filmList);
+app.use('/search', search);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
