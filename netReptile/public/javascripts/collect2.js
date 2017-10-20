@@ -206,8 +206,9 @@ function GetInfos(urls, res){
 					//return;
 				}
 				else{
-					//此处当前面一个url还未采集完，定时时间已经到下面一个，i的值已经等于urls.length 会少采集
-					allInfos.push({realName:urls[i].realName, gut:gut, infos:infos, type: urls[i].type});
+					if(infos.length !== 0){
+						allInfos.push({realName:urls[i].realName, gut:gut, infos:infos, type: urls[i].type});
+					}
 					i++;
 					if(i === urls.length){
 						clearInterval(timer);			
@@ -239,6 +240,7 @@ function GetInfo(res){
 				var info = {};					
 				if(!ch(elem).hasClass('hidden-cililian-btn') && !ch(elem).hasClass('show-cililian-btn')){
 					info.urlName = ch(elem).find('b').text();
+					info.isOwner = true;
 
 					ch(elem).find('a').each(function(j, val){
 						if(j === 0){
@@ -257,9 +259,11 @@ function GetInfo(res){
 						if(spanInfo.hasClass('label') && spanInfo.hasClass('label-danger')){
 							info.pixel = spanInfo.text();
 						}
-					});
+					});	
+					if(info.pixel !== '非高清或错误'){				
+						infos.push(info);
+					}
 				}
-				infos.push(info);
 			});
 			res(null, gut, infos)
 		}
@@ -291,7 +295,6 @@ function func(){
 						console.log(err);
 					}
 				});
-				//console.log(allInfos[i].realName);
 			}
 			
 			emitter.emit('Read');

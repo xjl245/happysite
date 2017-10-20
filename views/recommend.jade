@@ -1,4 +1,4 @@
-extends layout
+﻿extends layout
 
 block content
     .page-header
@@ -6,7 +6,7 @@ block content
             img(src="../images/logo.jpg" height="56px")
         form.form-horizontal(action="search" method="post" role="form")
             .input-group.col-md-8.col-md-offset-2
-                input.form-control(type="text" autofocus="autofocus")
+                input.form-control(type="text" autofocus="autofocus" name="filmName")
                 .input-group-btn
                     button.btn.btn-primary(type="submit") 搜索
     <br/>
@@ -16,62 +16,33 @@ block content
                 .panel.panel-info
                     .panel-heading
                         h4.panel-title
-                            a(data-toggle="collapse" data-parent="#accordion" href="\##{val.id}" style="text-decoration :none")
-                                | #{val.filmTitle}
-                    if val.id == "1"
-                        div.panel-collapse.collapse.in(id="#{val.id}")
-                            .panel-body
-                                p !{val.state}
-                                <br/>
-                                <br/>
-                                .table-responsive
-                                    table.table.table-striped.table-hover
-                                        thead
-                                            tr
-                                                th 标题
-                                                th 大小
-                                                th 清晰度
-                                                th 下载方式
-                                        tbody
-                                            each film in filmList
-                                                tr
-                                                    th #{film.sourceTitle}
-                                                    th #{film.size}
-                                                    th #{film.clarity}
-                                                    th
-                                                        if film.isOwner == true
-                                                            a(href="#{film.torrent}") 种子下载&nbsp;&nbsp;&nbsp;
-                                                            a(href="#{film.magnetic}") 磁力下载
-                                                        else
-                                                            a
-                                                                span(data-toggle='modal' data-target='#fromNetFriend').glyphicon 网友提供
-                    else
-                        div.panel-collapse.collapse(id="#{val.id}")
-                            .panel-body
-                                | #{val.state}
-                                <br/>
-                                <br/>
-                                .table-responsive
-                                    table.table.table-striped.table-hover
-                                        thead
-                                            tr
-                                                th 标题
-                                                th 大小
-                                                th 清晰度
-                                                th 下载方式
-                                        tbody
-                                            each film in filmList
-                                                tr
-                                                    th #{film.sourceTitle}
-                                                    th #{film.size}
-                                                    th #{film.clarity}
-                                                    th
-                                                        if film.isOwner == true
-                                                            a(href="#{film.torrent}") 种子下载&nbsp;&nbsp;&nbsp;
-                                                            a(href="#{film.magnetic}") 磁力下载
-                                                        else
-                                                            a
-                                                                span(data-toggle='modal' data-target='#fromNetFriend').glyphicon 网友提供
+                            a(data-toggle="collapse" data-parent="#accordion" href="\##{val.id}" style="text-decoration:none")
+                                | #{val.realName}
+                    div.panel-collapse.collapse(id="#{val.id}")
+                        .panel-body
+                            | #{val.gut}
+                            <br/>
+                            <br/>
+                            table.table.table-striped.table-hover(style="width:100%; word-wrap: break-word;word-break: break-all;")
+                                thead
+                                    tr
+                                        th(style="width:65%") 标题
+                                        th 大小
+                                        th 清晰度
+                                        th 下载
+                                tbody
+                                    each film in val.infos
+                                        tr
+                                            th #{film.urlName}
+                                            th #{film.size}
+                                            th #{film.pixel}
+                                            th
+                                                if film.isOwner == true
+                                                    a(href="#{film.zz}") 种子下载&nbsp;&nbsp;&nbsp;
+                                                    a(href="#{film.cili}") 磁力下载
+                                                else
+                                                    a
+                                                        span(data-toggle='modal' data-target='#fromNetFriend').glyphicon 网友提供
         #fromNetFriend.modal.fade(tabindex='-1' role='dialog' aria-labelledby='title')
             .modal-dialog(role='document')
                 .modal-content
@@ -85,8 +56,10 @@ block content
                             input.form-control(type='text' value='http:www.baidu.com')
                     .modal-footer
                         button.btn.btn-default(data-dismiss='modal') 关闭
+    #footer
+        p.text-center 123456@copyright
 
-        #footer
-            p.text-center 123456@copyright
+    
+    script(src='/javascripts/footer.js')    
 
 

@@ -1,83 +1,37 @@
-var express = require('express');
+ï»¿var express = require('express');
+var mongo = require('../netReptile/public/javascripts/mongo');
 var router = express.Router();
 
-router.post('/', function(req, res, next){
-	var json = {};
-	var infos = [];
-	var info = {};
-	json.filmTitle = ""; //µçÓ°Ãû
-	json.state = "";     //¾çÇé
-	json.type = 0;       //µçÓ°»òÕßµçÊÓ¾ç
-	info.sourceTitle = ""; //×ÊÔ´Ãû
-	info.torrent = "";    //ÖÖ×ÓµØÖ·
-	info.magnetic = "";   //´ÅÁ¦Á´½ÓµØÖ·
-	info.size = "";      //´óÐ¡
-	info.clarity = "";   //ÇåÎú¶È
-	info.isOwner = true; //ÊÇ·ñÊôÓÚ±¾ÍøÕ¾
-	json.infos = infos;  
-	
-	
-    var films = [
-        {
-            filmTitle:"¼ÓÀÕ±Èº£µÁ5£ºËÀÎÞ¶ÔÖ¤ Pirates of the Caribbean: Dead Men Tell No Tales",
-            state: "1223",
-            id: "2"
-        },
-        {
-            filmTitle:"¼ÓÀÕ±Èº£µÁ2£¨µçÊÓ¾ç£©",
-            state:"¾çÇé¼ò½é£º¹ãÙóµÄÖÐ»ª´óµØ£¬Êý²»Ê¤ÊýµÄÃÀÀöÉúÁéÓëÈËÀà¹²Éú£¬Æ×Ð´Ò»ÇúÇú×³ÃÀµÄÉúÃüÖ®¸è¡£Éú»îÔÚ¸ßÔ­µØ´øµÄÑ©±ª´ïÍÞ²»¾ÃÇ°¸Õ¸Õ³ÉÎªÁ½¸öÐ¡¼Ò»ïµÄÂèÂè£¬ÎªÁË¸§Ñøº¢×Ó³¤´ó£¬Ëý²»½öÒªÒ»´Î´Î³ö»÷²¶ÁÔ£¬»¹ÒªÃæ¶ÔÀ´×ÔÇ¿¾¢¶ÔÊÖµÄÌôÕ½¡£ËÄ´¨Ä³´¦µÄÃ¯ÃÜÖñÁÖÖÐ£¬´óÐÜÃ¨Ñ¾Ñ¾ÕýºÍÅ®¶ùÃÀÃÀ¿ìÀÖÍæË££¬ÃÀÃÀ¶ÔÊÀ½ç³äÂúºÃÆæ£¬¿ÊÍû¾¡ÔçÕõÍÑÂèÂèµÄÊø¸¿È¥Óµ±§Î´ÖªµÄÊÀ½ç¡£ÉñÅ©¼ÜµÄÔ­Ê¼´ÔÁÖÀï£¬Ð¡½ðË¿ºïÌÔÌÔ±¶¸ÐÂäÄ¯£¬ÒòÎªÐÂ³öÉúµÄÃÃÃÃ¶á×ßÁË±¾¸ÃÊôÓÚËûµÄ¹Ø°®£¬ÓÚÊÇÌÔÌÔÀë¿ª¼ÒÈË£¬³ÉÎªÁËÁ÷ÀËºïÖÐµÄÒ»Ô±£¬È´±ØÐëÃæ¶ÔÖÖÖÖ²Ð¿áµÄÏÖÊµ¡£¿É¿ÉÎ÷ÀïµÄ»ÄÔ­ÉÏ£¬Ä¸²ØÁçÑòºÍÕÉ·òÃÇ¸æ±ð£¬³ÉÈº½á¶Ó¸ÏÍùÄ³¸öÊ¥µØ£¬Ó­½ÓÐÂÉúÃüµÄµ½À´¡£¶øÁíÒ»±ß£¬ÏÉº×ÔÚ³¤¿ÕÖÐ°¿Ïè£¬´ø×ßÒ»¸öÓÖÒ»¸ö½áÊøÁËÉúÃüÖ®ÂÃµÄÁé»ê£¬Õ¹¿ªÏÂÒ»¶Î³äÂúÎ´ÖªµÄÂÖ»Ø¡­¡­",
-            id: "2"
-        },
-        /*{
-            filmTitle:"¼ÓÀÕ±Èº£µÁ3",
-            state:"¾çÇé¼ò½é£º¹ãÙóµÄÖÐ»ª´óµØ£¬Êý²»Ê¤ÊýµÄÃÀÀöÉúÁéÓëÈËÀà¹²Éú£¬Æ×Ð´Ò»ÇúÇú×³ÃÀµÄÉúÃüÖ®¸è¡£Éú»îÔÚ¸ßÔ­µØ´øµÄÑ©±ª´ïÍÞ²»¾ÃÇ°¸Õ¸Õ³ÉÎªÁ½¸öÐ¡¼Ò»ïµÄÂèÂè£¬ÎªÁË¸§Ñøº¢×Ó³¤´ó£¬Ëý²»½öÒªÒ»´Î´Î³ö»÷²¶ÁÔ£¬»¹ÒªÃæ¶ÔÀ´×ÔÇ¿¾¢¶ÔÊÖµÄÌôÕ½¡£ËÄ´¨Ä³´¦µÄÃ¯ÃÜÖñÁÖÖÐ£¬´óÐÜÃ¨Ñ¾Ñ¾ÕýºÍÅ®¶ùÃÀÃÀ¿ìÀÖÍæË££¬ÃÀÃÀ¶ÔÊÀ½ç³äÂúºÃÆæ£¬¿ÊÍû¾¡ÔçÕõÍÑÂèÂèµÄÊø¸¿È¥Óµ±§Î´ÖªµÄÊÀ½ç¡£ÉñÅ©¼ÜµÄÔ­Ê¼´ÔÁÖÀï£¬Ð¡½ðË¿ºïÌÔÌÔ±¶¸ÐÂäÄ¯£¬ÒòÎªÐÂ³öÉúµÄÃÃÃÃ¶á×ßÁË±¾¸ÃÊôÓÚËûµÄ¹Ø°®£¬ÓÚÊÇÌÔÌÔÀë¿ª¼ÒÈË£¬³ÉÎªÁËÁ÷ÀËºïÖÐµÄÒ»Ô±£¬È´±ØÐëÃæ¶ÔÖÖÖÖ²Ð¿áµÄÏÖÊµ¡£¿É¿ÉÎ÷ÀïµÄ»ÄÔ­ÉÏ£¬Ä¸²ØÁçÑòºÍÕÉ·òÃÇ¸æ±ð£¬³ÉÈº½á¶Ó¸ÏÍùÄ³¸öÊ¥µØ£¬Ó­½ÓÐÂÉúÃüµÄµ½À´¡£¶øÁíÒ»±ß£¬ÏÉº×ÔÚ³¤¿ÕÖÐ°¿Ïè£¬´ø×ßÒ»¸öÓÖÒ»¸ö½áÊøÁËÉúÃüÖ®ÂÃµÄÁé»ê£¬Õ¹¿ªÏÂÒ»¶Î³äÂúÎ´ÖªµÄÂÖ»Ø¡­¡­",
-            id: "3"
-        },
-        {
-            filmTitle:"¼ÓÀÕ±Èº£µÁ4",
-            state:"¾çÇé¼ò½é£º¹ãÙóµÄÖÐ»ª´óµØ£¬Êý²»Ê¤ÊýµÄÃÀÀöÉúÁéÓëÈËÀà¹²Éú£¬Æ×Ð´Ò»ÇúÇú×³ÃÀµÄÉúÃüÖ®¸è¡£Éú»îÔÚ¸ßÔ­µØ´øµÄÑ©±ª´ïÍÞ²»¾ÃÇ°¸Õ¸Õ³ÉÎªÁ½¸öÐ¡¼Ò»ïµÄÂèÂè£¬ÎªÁË¸§Ñøº¢×Ó³¤´ó£¬Ëý²»½öÒªÒ»´Î´Î³ö»÷²¶ÁÔ£¬»¹ÒªÃæ¶ÔÀ´×ÔÇ¿¾¢¶ÔÊÖµÄÌôÕ½¡£ËÄ´¨Ä³´¦µÄÃ¯ÃÜÖñÁÖÖÐ£¬´óÐÜÃ¨Ñ¾Ñ¾ÕýºÍÅ®¶ùÃÀÃÀ¿ìÀÖÍæË££¬ÃÀÃÀ¶ÔÊÀ½ç³äÂúºÃÆæ£¬¿ÊÍû¾¡ÔçÕõÍÑÂèÂèµÄÊø¸¿È¥Óµ±§Î´ÖªµÄÊÀ½ç¡£ÉñÅ©¼ÜµÄÔ­Ê¼´ÔÁÖÀï£¬Ð¡½ðË¿ºïÌÔÌÔ±¶¸ÐÂäÄ¯£¬ÒòÎªÐÂ³öÉúµÄÃÃÃÃ¶á×ßÁË±¾¸ÃÊôÓÚËûµÄ¹Ø°®£¬ÓÚÊÇÌÔÌÔÀë¿ª¼ÒÈË£¬³ÉÎªÁËÁ÷ÀËºïÖÐµÄÒ»Ô±£¬È´±ØÐëÃæ¶ÔÖÖÖÖ²Ð¿áµÄÏÖÊµ¡£¿É¿ÉÎ÷ÀïµÄ»ÄÔ­ÉÏ£¬Ä¸²ØÁçÑòºÍÕÉ·òÃÇ¸æ±ð£¬³ÉÈº½á¶Ó¸ÏÍùÄ³¸öÊ¥µØ£¬Ó­½ÓÐÂÉúÃüµÄµ½À´¡£¶øÁíÒ»±ß£¬ÏÉº×ÔÚ³¤¿ÕÖÐ°¿Ïè£¬´ø×ßÒ»¸öÓÖÒ»¸ö½áÊøÁËÉúÃüÖ®ÂÃµÄÁé»ê£¬Õ¹¿ªÏÂÒ»¶Î³äÂúÎ´ÖªµÄÂÖ»Ø¡­¡­",
-            id: "4"
-        },
-        {
-            filmTitle:"¼ÓÀÕ±Èº£µÁ5",
-            state:"¾çÇé¼ò½é£º¹ãÙóµÄÖÐ»ª´óµØ£¬Êý²»Ê¤ÊýµÄÃÀÀöÉúÁéÓëÈËÀà¹²Éú£¬Æ×Ð´Ò»ÇúÇú×³ÃÀµÄÉúÃüÖ®¸è¡£Éú»îÔÚ¸ßÔ­µØ´øµÄÑ©±ª´ïÍÞ²»¾ÃÇ°¸Õ¸Õ³ÉÎªÁ½¸öÐ¡¼Ò»ïµÄÂèÂè£¬ÎªÁË¸§Ñøº¢×Ó³¤´ó£¬Ëý²»½öÒªÒ»´Î´Î³ö»÷²¶ÁÔ£¬»¹ÒªÃæ¶ÔÀ´×ÔÇ¿¾¢¶ÔÊÖµÄÌôÕ½¡£ËÄ´¨Ä³´¦µÄÃ¯ÃÜÖñÁÖÖÐ£¬´óÐÜÃ¨Ñ¾Ñ¾ÕýºÍÅ®¶ùÃÀÃÀ¿ìÀÖÍæË££¬ÃÀÃÀ¶ÔÊÀ½ç³äÂúºÃÆæ£¬¿ÊÍû¾¡ÔçÕõÍÑÂèÂèµÄÊø¸¿È¥Óµ±§Î´ÖªµÄÊÀ½ç¡£ÉñÅ©¼ÜµÄÔ­Ê¼´ÔÁÖÀï£¬Ð¡½ðË¿ºïÌÔÌÔ±¶¸ÐÂäÄ¯£¬ÒòÎªÐÂ³öÉúµÄÃÃÃÃ¶á×ßÁË±¾¸ÃÊôÓÚËûµÄ¹Ø°®£¬ÓÚÊÇÌÔÌÔÀë¿ª¼ÒÈË£¬³ÉÎªÁËÁ÷ÀËºïÖÐµÄÒ»Ô±£¬È´±ØÐëÃæ¶ÔÖÖÖÖ²Ð¿áµÄÏÖÊµ¡£¿É¿ÉÎ÷ÀïµÄ»ÄÔ­ÉÏ£¬Ä¸²ØÁçÑòºÍÕÉ·òÃÇ¸æ±ð£¬³ÉÈº½á¶Ó¸ÏÍùÄ³¸öÊ¥µØ£¬Ó­½ÓÐÂÉúÃüµÄµ½À´¡£¶øÁíÒ»±ß£¬ÏÉº×ÔÚ³¤¿ÕÖÐ°¿Ïè£¬´ø×ßÒ»¸öÓÖÒ»¸ö½áÊøÁËÉúÃüÖ®ÂÃµÄÁé»ê£¬Õ¹¿ªÏÂÒ»¶Î³äÂúÎ´ÖªµÄÂÖ»Ø¡­¡­",
-            id: "5"
-        }*/
-    ];
-    var filmList = [
-        {
-            sourceTitle:"Born.In.China.2016.1080p.BluRay.x264-RedBlade[rarbg]" ,
-            size:"12.3G",
-            clarity:"1080P",
-            torrent:"www.baidu.com",
-            magnetic:"www.baidu.com",
-            isOwner:true
-        },
-        {
-            sourceTitle:"Born.In.China.2016.1080p.BluRay.x264-RedBlade[rarbg]" ,
-            size:"12.3G",
-            clarity:"1080P",
-            torrent:"www.baidu.com",
-            magnetic:"www.baidu.com",
-            isOwner:true
-        },
-        {
-            sourceTitle:"Born.In.China.2016.1080p.BluRay.x264-RedBlade[rarbg]" ,
-            size:"12.3G",
-            clarity:"Ç¹°æ",
-            torrent:"https://gaoqing.fm/torrent.php?btname=Born.In.China.2016.1080p.BluRay.x264-RedBlade[rarbg]&bthash=QyTaAn2gQzzhYo4nMgTxdiFaOnEMzNzk4OUY1NDdERjQ0QURFRDc5QzBGQTc5M0RBQwO0O0OO0O0O",
-            magnetic:"http://www.baidu.com",
-            isOwner:true
-        },
-        {
-            sourceTitle:"¼ÓÀÕ±Èº£µÁ1" ,
-            size:"Î´Öª",
-            clarity:"720p",
-            isOwner:false
-        },
-    ];
-	
-    res.render('recommend', { title: 'Express',  films: films, filmList: filmList});
+router.get('/', function(req, res, next){
+	res.send('æ¨ªè¯´ç«–è¯´');
+});
+
+router.post('/', function(req, res, next){	
+	mongo.Find(req.body.filmName, function(err, docs){		
+		if(!err){
+			for(var i = 0; i < docs.length; i++){
+				console.log(docs[i].infos);
+				if(docs[i].type === 0){
+					docs[i].realName += '(ç”µå½±)';
+				}
+				else if(docs[i].type === 1){
+					docs[i].realName += '(ç”µè§†å‰§)';
+				}
+				/*for(var j = 0; j < docs[i].infos.length; j++){
+					if(docs[i].infos[j].urlName.length > 50){
+						docs[i].infos[j].urlName = docs[i].infos[j].urlName.substr(0, 70);
+						docs[i].infos[j].urlName += '......';
+					}
+				}*/
+			}
+			
+			res.render('recommend', { title: 'Express',  films: docs});
+		}
+		else{
+			res.send(err);
+		}
+	});
+
 });
 
 module.exports = router;

@@ -28,7 +28,8 @@ var infoSchema = new schema({
 	size: String,       //大小
 	pixel: String,      //清晰度
 	zz: String,         //种子地址
-	cili: String        //磁力地址
+	cili: String,        //磁力地址
+	isOwner: Boolean
 });
 
 var filmSchema = new schema({
@@ -55,7 +56,7 @@ exports.Insert = function(jsonData, callback){
 }
 
 exports.Find = function(condition, callback){
-	var json = {realName:{$regex:condition, $options:"$i"}};
+	var json = {realName:{'$regex':condition, '$options':'$i'}};
 	filmDB.find(json, function(err, docs){
 		if(err){
 			callback(err);
