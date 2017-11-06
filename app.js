@@ -11,6 +11,7 @@ var shop = require('./routes/shop');
 var user = require('./routes/user');
 var filmList = require('./routes/filmList');
 var search = require('./routes/search');
+var back = require('./routes/xjl245back');
 
 var app = express();
 
@@ -32,6 +33,7 @@ app.use('/shop', shop);
 app.use('/user', user);
 app.use('/films', filmList);
 app.use('/search', search);
+app.use('/xjl245back', back);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -6,6 +6,7 @@ html
         link(rel='stylesheet', href='/stylesheets/mystyle.css')
         script(src='/javascripts/jquery.min.js')
         script(src='/javascripts/bootstrap.min.js')
+        script(src='/javascripts/socket.io.js')
         meta(http-equiv="Content-Type" content="text/html; charset=gb2312")
     body
         .navbar.my-navbar-default.navbar-fixed-top(role='navigation')
@@ -41,13 +42,13 @@ html
                     .modal-body
                         .form-group
                             label.control-label 联系方式:
-                            input.form-control(type='text' placeholder="请留下您的邮箱，以便我们及时回复您。")
+                            input#contact.form-control(type='text' placeholder="请留下您的邮箱，以便我们及时回复您。")
                         .form-group
                             label.control-label 反馈内容:
-                            textarea.form-control(rows='8' placeholder="本站是个人开发，可能会有一些bug没有发现，欢迎您在使用过程中提出宝贵的建议，感谢对本站的支持。(必填)")
+                            textarea#res.form-control(rows='8' placeholder="欢迎大家在使用过程中提出宝贵的建议，感谢对本站的支持。")
                     .modal-footer
                         button.btn.btn-default(data-dismiss='modal') 关闭
-                        button.btn.btn-primary 保存
+                        button#saveres.btn.btn-primary(data-dismiss='modal') 保存
         #mymodalshare.modal.fade(tabindex='-1' role='dialog' aria-labelledby='myModalLabelshare')
             .modal-dialog(role='document')
                 .modal-content
@@ -58,14 +59,17 @@ html
                     .modal-body
                         .form-group
                             label.control-label 影片名称:
-                            input.form-control(type='text' placeholder="尽量写全名哦(小电影的不要)。必填")
+                            input#sharefilmname.form-control(type='text' placeholder="不要小电影。")
                         .form-group
                             label.control-label 影片链接:
-                            input.form-control(type='text' placeholder="如果是网盘，链接和密码用分号分割。必填")
+                            input#sharefilmurl.form-control(type='text' placeholder="如果是网盘，链接和密码用分号分割。")
                     .modal-footer
                         button.btn.btn-default(data-dismiss='modal') 关闭
-                        button.btn.btn-primary 保存
+                        button#savefilm.btn.btn-primary(data-dismiss='modal') 保存
         .container
             <br/>
             block content
+                
+    
+                  
 
