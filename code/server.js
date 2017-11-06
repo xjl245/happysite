@@ -29,7 +29,6 @@ module.exports.bindServer = function(server){
     });
 
     sio.of('/back').on('connection', function(socket){
-    	console.log('connect');
     	socket.on('start', function(){
     		mongo.ShareFind(function(err, docs){
     			if(err){
@@ -40,5 +39,16 @@ module.exports.bindServer = function(server){
     			}
     		})
     	});
+
+        socket.on('delFilm', function(id){
+            mongo.ShareRemove(id, function(err, result){
+                if(err){
+                    console.log(err);
+                }
+                else{
+                    socket.emit('delSuccess', id);
+                }
+            })
+        })
     });
 }

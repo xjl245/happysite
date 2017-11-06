@@ -89,7 +89,11 @@ exports.ShareInsert = function(jsonData, callback){
     });
 }
 
-//exports.ShareRemove = function
+exports.ShareRemove = function(id, callback){
+	shareDB.remove({_id:id}, function(err, result){
+		callback(err, result);
+	})
+}
 
 exports.ShareFind = function(callback){
 	shareDB.find(function(err, docs){
