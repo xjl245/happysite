@@ -12,7 +12,28 @@ block content
 					th 电影名称
 					th 电影路径
 					th 操作
-			tbody#share				
+			tbody#share
+	#filmShare.modal.fade(tabindex='-1' role='dialog' aria-labelledby='Labelshare')
+		.modal-dialog(role='document')
+			.modal-content
+				.modal-header
+					button.close(data-dismiss='modal' aria-label='close')
+						span(aria-hidden='true') x
+					h4#Labelshare.modal-title 属性编辑
+				.modal-body
+					.form-group
+						label.control-label 影片名称:
+						input#name.form-control(type='text')
+					.form-group
+						label.control-label 影片链接:
+						input#url.form-control(type='text')
+					.form-group
+						label.control-label 所属:
+						select#belong.form-control
+						button#searchBelong.btn 搜索
+				.modal-footer
+						button.btn.btn-default(data-dismiss='modal') 关闭
+						button#saveBelong.btn.btn-primary(data-dismiss='modal') 保存					
 	script(type='text/javascript', src='/js/userclick.js')
 	script(type='text/javascript', src='/js/back.js') 				
 

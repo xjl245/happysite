@@ -50,5 +50,27 @@ module.exports.bindServer = function(server){
                 }
             })
         })
+
+        socket.on('searchBelong', function(name){
+            var names = [];
+            console.log(name);
+            mongo.Find(name, function(err, docs){  
+                console.log(docs);    
+                if(!err){
+                    for(var i = 0; i < docs.length; i++){
+                        if(docs[i].type === 0){
+                            docs[i].realName += '(电影)';
+                        }
+                        else if(docs[i].type === 1){
+                            docs[i].realName += '(电视剧)';
+                        }
+
+                        names.push(docs[i].realName);
+                    }
+
+                    socket.emit('result', names);
+                }
+            })
+        })
     });
 }

@@ -34,13 +34,35 @@
             var cell2 = oneRow.insertCell(); 
             var cell3 = oneRow.insertCell(); 
             var cell4 = oneRow.insertCell(); 
-            cell1.innerHTML = "<a><span data-toggle='modal' data-target='#mymodalshare'>" + docs[i]._id + "</span></a>"
+            cell1.innerHTML = "<a id = " + i + "><span data-toggle='modal' data-target='#filmShare'>" + docs[i]._id + "</span></a>";
             cell2.innerHTML = docs[i].filmName; 
             cell3.innerHTML = docs[i].filmUrl;
             cell4.innerHTML = "<button class='btn' id = " + docs[i]._id + ">删除</button>";
             $('#' + docs[i]._id).click(function(){
                 socket.emit('delFilm', this.id);
             })
+
+            $('#' + i).click(function(){
+                $('#name').val(docs[this.id].filmName);
+                $('#url').val(docs[this.id].filmUrl);
+            })
         }
     }
+
+    $('#searchBelong').click(function(){
+        socket.emit('searchBelong', $('#name').val());
+    });
+
+    socket.on('result', function(names){
+        $('#belong').empty();
+        names.push('111111');
+        names.push('222222');
+        for (var i = names.length - 1; i >= 0; i--) {            
+            $('#belong').append("<option> " + names[i] + "</option>");
+        }
+    })
+
+    $('#saveBelong').click(function(){
+        //将数据发送给数据库
+    })
 //}
