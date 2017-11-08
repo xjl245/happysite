@@ -14,8 +14,11 @@ module.exports.bindServer = function(server){
     	})
 
     	socket.on('res', function(info){
-    		console.log(info.contact);
-    		console.log(info.res);
+            mongo.ResInsert({email: info.contact, res:info.res}, function(err){
+                if(err){
+                    console.log(err);
+                }
+            })
     	})
     });
 
@@ -29,6 +32,15 @@ module.exports.bindServer = function(server){
     				socket.emit('shareData', docs);
     			}
     		})
+
+            mongo.ResFind(function(err, docs){
+                if(err){
+                    console.log(err);
+                }
+                else{
+                    socket.emit('resData', docs);
+                }
+            })
     	});
 
         socket.on('delFilm', function(id){
@@ -38,6 +50,18 @@ module.exports.bindServer = function(server){
                 }
                 else{
                     socket.emit('delSuccess', id);
+                }
+            })
+        })
+
+        socket.on('delRes', function(id){
+            console.log('delRes');
+            mongo.ResRemove(id, function(err, result){
+                if(err){
+                    console.log(err);
+                }
+                else{
+                    socket.emit('delResSuccess', id);
                 }
             })
         })

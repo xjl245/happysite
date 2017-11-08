@@ -13,11 +13,27 @@
         Insert(docs);
     })
 
+    socket.on('resData', function(docs){
+        InsertRes(docs);
+    })
+
     socket.on('delSuccess', function(id){
         var table = document.getElementById("share");
         var rows = table.rows;
-        console.log(rows[0].cells[0].innerText);
+        //console.log(rows[0].cells[0].innerText);
+        //console.log(id);
+        for (var i = rows.length - 1; i >= 0; i--) {
+            if(rows[i].cells[0].innerText === id){
+                table.deleteRow(i);
+                break;
+            } 
+        }
+    })
+
+    socket.on('delResSuccess', function(id){
         console.log(id);
+        var table = document.getElementById("response");
+        var rows = table.rows;
         for (var i = rows.length - 1; i >= 0; i--) {
             if(rows[i].cells[0].innerText === id){
                 table.deleteRow(i);
@@ -49,6 +65,25 @@
         }
     }
 
+    function InsertRes(docs){
+        for (var i = docs.length - 1; i >= 0; i--) {
+            console.log(docs);
+            var table = document.getElementById("response");    
+            var oneRow = table.insertRow(); 
+            var cell1 = oneRow.insertCell(); 
+            var cell2 = oneRow.insertCell(); 
+            var cell3 = oneRow.insertCell(); 
+            var cell4 = oneRow.insertCell(); 
+            cell1.innerHTML = docs[i]._id;
+            cell2.innerHTML = docs[i].email; 
+            cell3.innerHTML = docs[i].res;
+            cell4.innerHTML = "<button class='btn' id = " + docs[i]._id + ">删除</button>";
+            $('#' + docs[i]._id).click(function(){
+                socket.emit('delRes', this.id);
+            })
+        }
+    }
+
     $('#searchBelong').click(function(){
         socket.emit('searchBelong', $('#name').val());
     });
@@ -63,5 +98,11 @@
     $('#saveBelong').click(function(){
         var actualInfo = {name:$('#name').val(), url:$('#url').val(), belong:$("#belong option:selected").val()};
         socket.emit('handledShare', actualInfo);
+    })
+
+    $('.unreal').each(function(){
+        $(this).click(function(){
+            $('#otherUrl').val($(this).children('p')[0].innerText)
+        })
     })
 //}

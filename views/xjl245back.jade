@@ -5,14 +5,25 @@ block content
 	<br>
 	<br>
 	.row
-		table.table.table-striped.table-hover
+		p 来自网友的分享:
+		table.table.table-striped.table-hover(style="width:100%; word-wrap: break-word;word-break: break-all;")
 			thead
 				tr
-					th id
-					th 电影名称
-					th 电影路径
+					th(style="width:21%") id
+					th(style="width:30%") 电影名称
+					th(style="width:44%") 电影路径
 					th 操作
 			tbody#share
+		<br>
+		p 来自网友的反馈:	
+		table.table.table-striped.table-hover(style="width:100%; word-wrap: break-word;word-break: break-all;")
+			thead
+				tr
+					th(style="width:21%") id
+					th(style="width:30%") 联系方式
+					th(style="width:44%") 问题
+					th 操作
+			tbody#response
 	#filmShare.modal.fade(tabindex='-1' role='dialog' aria-labelledby='Labelshare')
 		.modal-dialog(role='document')
 			.modal-content

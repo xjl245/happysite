@@ -47,7 +47,7 @@ var resSchema = new schema({
 
 var filmDB = mongoose.model('filmDB',filmSchema, 'filmInfos');
 var shareDB = mongoose.model('shareDB',shareSchema, 'share');
-var resDB = mongoose.model('resDB',shareSchema, 'res');
+var resDB = mongoose.model('resDB',resSchema, 'res');
 
 exports.Insert = function(jsonData, callback){
 	var db = new filmDB(jsonData);
@@ -112,6 +112,31 @@ exports.ShareRemove = function(id, callback){
 exports.ShareFind = function(callback){
 	shareDB.find(function(err, docs){
 		callback(err, docs);
+	})
+}
+
+//user res
+exports.ResInsert = function(jsonData, callback){
+	var db = new resDB(jsonData);
+	db.save(function (err, res) {
+        if (err) {
+            callback(err);
+        }
+        else {
+			//console.log(res);
+        }
+    });
+}
+
+exports.ResFind = function(callback){
+	resDB.find(function(err, docs){
+		callback(err, docs);
+	})
+}
+
+exports.ResRemove = function(id, callback){
+	resDB.remove({_id:id}, function(err, result){
+		callback(err, result);
 	})
 }
 

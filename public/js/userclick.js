@@ -21,9 +21,5 @@ window.onload = function(){
         socket.emit('res', info);
     })
 
-    $('.unreal').each(function(){
-        $(this).click(function(){
-            $('#otherUrl').val($(this).children('p')[0].innerText)
-        })
-    })
+    
 }
