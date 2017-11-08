@@ -11,15 +11,6 @@ module.exports.bindServer = function(server){
     				console.log(err);
     			}
     		})
-
-    		/*mongo.ShareFind(function(err, docs){
-    			if(err){
-    				console.log(err);
-    			}
-    			console.log(docs);
-    		})*/
-    		//console.log(info.name);
-    		//console.log(info.url);
     	})
 
     	socket.on('res', function(info){
@@ -53,9 +44,7 @@ module.exports.bindServer = function(server){
 
         socket.on('searchBelong', function(name){
             var names = [];
-            console.log(name);
-            mongo.Find(name, function(err, docs){  
-                console.log(docs);    
+            mongo.Find(name, function(err, docs){      
                 if(!err){
                     for(var i = 0; i < docs.length; i++){
                         if(docs[i].type === 0){
@@ -72,5 +61,14 @@ module.exports.bindServer = function(server){
                 }
             })
         })
+
+        socket.on('handledShare', function(data){
+        	data.belong = data.belong.substr(0, data.belong.length - 4);
+        	mongo.Update(data, function(err, result){
+        		if(err){
+        			console.log(err);
+        		}
+        	})
+        });
     });
 }

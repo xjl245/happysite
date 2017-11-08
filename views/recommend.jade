@@ -31,7 +31,7 @@ block content
                                         th 清晰度
                                         th 下载
                                 tbody
-                                    each film in val.infos
+                                    each film, index in val.infos
                                         tr
                                             th #{film.urlName}
                                             th #{film.size}
@@ -41,8 +41,9 @@ block content
                                                     a(href="#{film.zz}") 种子下载&nbsp;&nbsp;&nbsp;
                                                     a(href="#{film.cili}") 磁力下载
                                                 else
-                                                    a
+                                                    a.unreal
                                                         span(data-toggle='modal' data-target='#fromNetFriend').glyphicon 网友提供
+                                                        p.hide #{film.other}
         #fromNetFriend.modal.fade(tabindex='-1' role='dialog' aria-labelledby='title')
             .modal-dialog(role='document')
                 .modal-content
@@ -53,7 +54,7 @@ block content
                     .modal-body
                         .form-group
                             label.control-label 影片链接:
-                            input.form-control(type='text' value='http:www.baidu.com')
+                            input#otherUrl.form-control(type='text')
                     .modal-footer
                         button.btn.btn-default(data-dismiss='modal') 关闭
     #footer

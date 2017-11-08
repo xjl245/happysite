@@ -20,4 +20,10 @@ window.onload = function(){
         var info = {contact:contact, res:res};
         socket.emit('res', info);
     })
+
+    $('.unreal').each(function(){
+        $(this).click(function(){
+            $('#otherUrl').val($(this).children('p')[0].innerText)
+        })
+    })
 }

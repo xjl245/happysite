@@ -55,14 +55,13 @@
 
     socket.on('result', function(names){
         $('#belong').empty();
-        names.push('111111');
-        names.push('222222');
         for (var i = names.length - 1; i >= 0; i--) {            
             $('#belong').append("<option> " + names[i] + "</option>");
         }
     })
 
     $('#saveBelong').click(function(){
-        //将数据发送给数据库
+        var actualInfo = {name:$('#name').val(), url:$('#url').val(), belong:$("#belong option:selected").val()};
+        socket.emit('handledShare', actualInfo);
     })
 //}

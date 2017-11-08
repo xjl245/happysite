@@ -23,7 +23,8 @@ var infoSchema = new schema({
 	size: String,       
 	pixel: String,      
 	zz: String,         
-	cili: String,        
+	cili: String,  
+	other: String,      
 	isOwner: Boolean
 });
 
@@ -70,6 +71,19 @@ exports.Find = function(condition, callback){
 			callback(null, docs);
 		}
 	});
+}
+
+exports.Update = function(data, callbakc){
+	var conditionJson = {realName:data.belong};
+	var funcJson = {$push:{infos:{urlName: data.name, other:data.url, isOwner:false}}};
+	filmDB.update(conditionJson, funcJson, function(err, result){
+		if(err){
+			callbakc(err);
+		}
+		else{
+			callbakc(null, result);
+		}
+	})
 }
 
 exports.Remove = function(){
